@@ -1,0 +1,12 @@
+#include "mathLib.h"
+
+#include "Point3d.h"
+#include "Vector.h"
+#include "Matrix.h"
+#include "Capsule.h"
+#include "Plane.h"
+#include "Quaternion.h"
+#include "Sphere.h"
+#include "ThreeTuple.h"
+#include "TransformationMatrix.h"
+#include "Vector3d.h"
