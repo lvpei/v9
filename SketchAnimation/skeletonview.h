@@ -23,7 +23,6 @@ class SkeletonView: public View3D
 {
 	Q_OBJECT
 
-
 public:
 	SkeletonView(QWidget* parent);
 	~SkeletonView();
@@ -90,6 +89,7 @@ private slots:
 	void updatePose();
 
 private:
+	
 	// the character skeleton
 	Skeleton* m_pSkeleton;
 	// the pose sequence
@@ -97,4 +97,5 @@ private:
 
 	// emit signal to update the character pose
 	QTimer* m_pTimer;
+	bool m_bDrawSkeleton;
 };

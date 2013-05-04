@@ -81,6 +81,9 @@ SkeletonView::SkeletonView(QWidget* parent): View3D(PERSPECTIVE,parent)
 	focus_joint_id_ = -1;
 	curColor = Vector3d(1.,1.,1.);
 	
+	m_pSkeleton = NULL;
+	m_bDrawSkeleton = false;
+
 	m_pTimer = NULL;
 	m_pTimer = new QTimer();
 	m_pTimer->setInterval(30);
@@ -92,6 +95,9 @@ SkeletonView::~SkeletonView()
 {
 	if(m_pTimer)
 		delete m_pTimer;
+
+	if(m_pSkeleton)
+		delete m_pSkeleton;
 }
 void SkeletonView::initializeGL() {
 	qglClearColor( Qt::gray );
@@ -115,13 +121,15 @@ void SkeletonView::initializeGL() {
 	floor_pos_ = Vector3d(0.,-0.1,0.);
 
 	// load the skeleton structure
-	//m_pSkeleton = new Skeleton(".\\Resources\\skeleton.asf",0.6);
 	m_pSkeleton = new Skeleton(".\\Resources\\boxing_13.asf",0.3);
-	//m_pSkeleton = new Skeleton(".\\Resources\\walk_02.asf",0.3);
 	if(!m_pSkeleton->isLoaded())
 		qDebug()<<"skeleton is not loaded";
 	else
+	{	
 		qDebug()<<"skeleton is loaded";
+		m_pSkeleton->set_display_list();
+		m_pSkeleton->setBasePosture();
+	}
 }
 
 
@@ -232,13 +240,10 @@ void drawFloor( const Vector3d & a , QSharedPointer< QGLShaderProgram > shader )
 	glPopMatrix();
 }
 
-
-
 void drawFloor2( const Vector3d & a , QSharedPointer< QGLShaderProgram > shader )
 {
     (*SkeletonView::shapes)["floor"]->draw(shader);
 }
-
 
 void drawJoint( const Vector3d & a ){
 	// TODO: Draw a sphere
@@ -257,6 +262,9 @@ void randomColor(){
 
 void SkeletonView::render(QSharedPointer< QGLShaderProgram > shader)
 {   
+	if(!m_bDrawSkeleton)
+		return;
+
 	// obtain the root joint
 	Bone root = m_pSkeleton->m_pBoneList[0];
     
@@ -646,6 +654,8 @@ void SkeletonView::receiveNewMotion(vector<Posture>& posture_arr)
 	m_vPostureSeq.assign(posture_arr.begin(),posture_arr.end());
 
 	startTimer();
+
+	m_bDrawSkeleton = true;
 }
 
 void SkeletonView::startTimer()

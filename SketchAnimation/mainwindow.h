@@ -20,6 +20,8 @@ namespace Ui {
 class MainWindow;
 }
 
+class Skeleton;
+
 class TreeModel;
 
 class MainWindow : public QMainWindow
@@ -66,6 +68,7 @@ private slots:
 		set to sketch character pose
 	*/
 	void setToSketchPose(bool t_);
+	
 	/*
 		set to sketch character animation
 	*/

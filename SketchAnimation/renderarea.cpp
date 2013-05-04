@@ -91,6 +91,7 @@ RenderArea::RenderArea(QWidget *parent)
 	int w = gridImage.width();
 
 	pen.setColor(QColor(0,0,0));
+	
 	// create the timer
 	m_pTimer = NULL;
 
@@ -126,7 +127,7 @@ RenderArea::RenderArea(QWidget *parent)
 	m_bRightButtonDown = false;
 	m_bMidButtonDown = false;
 
-	m_pSkeleton = NULL;
+	//m_pSkeleton = NULL;
 	m_pMotion = NULL;
 
 	defaultColor = QColor(34,139,34,255);
@@ -150,6 +151,8 @@ RenderArea::RenderArea(QWidget *parent)
 	m_iShowTrajectoryIndex = 0;
 
 	m_TrajectoryFeature.resize(5);
+
+	m_pSkeleton = NULL;
 }
 
 RenderArea::~RenderArea()
@@ -1260,10 +1263,8 @@ void RenderArea::setDBDir(const vector<QString>& baseDir, vector<DatabaseUnit>& 
 	for(int i = 0; i < m_vMotionClip.size(); i++)
 		motion_clip_index.push_back(i);
 
-	int start,end;
-	//loadMocapData("D:\\Siggraph2013\\v9\\SketchAnimation\\Resources\\lvpei.standingstraightforward_a.amc","amc",&start,&end);
-	//loadMocapData("Resources\\boxing\\boxing_13_17_Take_001.amc","amc",&start,&end);
-	loadMocapData(motion_clip_filename[0],"amc",&start,&end);
+	//int start,end;
+	//loadMocapData(motion_clip_filename[0],"amc",&start,&end);
 
 	//return;
 
@@ -1526,18 +1527,15 @@ void RenderArea::initializeGL()
 	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);             // Really Nice Perspective Calculations
 
 	// load the skeleton structure
-	//m_pSkeleton = new Skeleton(".\\Resources\\skeleton.asf",SKELETON_SCALE);
 	m_pSkeleton = new Skeleton(".\\Resources\\boxing_13.asf",SKELETON_SCALE);
-	//m_pSkeleton = new Skeleton(".\\Resources\\walk_02.asf",SKELETON_SCALE);
 	if(!m_pSkeleton->isLoaded())
 		qDebug()<<"skeleton is not loaded";
 	else
+	{	
 		qDebug()<<"skeleton is loaded";
-
-	// set the display list for skeleton
-	m_pSkeleton->set_display_list();
-
-	m_pSkeleton->setBasePosture();
+		m_pSkeleton->set_display_list();
+		m_pSkeleton->setBasePosture();
+	}
 }
 
 void RenderArea::resizeGL(int width, int height)
@@ -1592,8 +1590,10 @@ void RenderArea::loadMocapData(const char* filename,const char* type, int* p_sta
 
 		if(!m_pMotion)
 		{
-			(*p_start) = 0;
-			(*p_end) = m->m_NumFrames - 1;
+			if(p_start)
+				(*p_start) = 0;
+			if(p_end)
+				(*p_end) = m->m_NumFrames - 1;
 
 			m_pMotion = m;
 		}
@@ -2170,7 +2170,7 @@ void RenderArea::setDefaultStatus(bool status)
 {
 	m_bStartUp = status;
 
-	if(m_bStartUp)
+	if(m_bStartUp && m_bSketchPose)
 	{
 		int numposes = m_pViewArray[m_iCurrenView]->m_nDBNum;
 		
@@ -2204,6 +2204,7 @@ void RenderArea::setDefaultStatus(bool status)
 			imgindex.push_back(genRandomInt(0,numposes-1));
 		}
 		//*/
+		
 		// assign different colors to selected images
 		int* index = new int[imgindex.size()];
 		double* color = new double[imgindex.size()];
@@ -2227,7 +2228,7 @@ void RenderArea::setDefaultStatus(bool status)
 
 
 /*
-process the selection event
+	process the selection event
 */
 void RenderArea::processSelection(int hits,unsigned int* buffer)
 {
