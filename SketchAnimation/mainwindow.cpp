@@ -32,6 +32,7 @@ QMainWindow(parent),
 	ui(new Ui::MainWindow)
 {
 	ui->setupUi(this);
+
 	strCurrentFileName = "";
 	m_pSAEncodeImg = NULL;
 	m_iDisplayNearestNum = 50;
@@ -61,7 +62,9 @@ QMainWindow(parent),
 	//QObject::connect(ui->graphicsView,SIGNAL(setBackgroundImg(int)),this,SLOT(setBackgroundImg(int)));
 	
 	// send & receive new motion
-	QObject::connect(ui->renderarea,SIGNAL(sendNewMotion(vector<Posture>&)),ui-> animationWindow,SLOT(receiveNewMotion(vector<Posture>&)));
+	QObject::connect(ui->renderarea,SIGNAL(sendNewMotion(vector<Posture>&)),ui->animationWindow,SLOT(receiveNewMotion(vector<Posture>&)));
+
+	QObject::connect(ui->animationWindow,SIGNAL(updateTimelineRangeAndInterval(int, int, int)),this,SLOT(changeTimelineRangeAndInterval(int,int,int)));
 
 	clearTempFiles();
 
@@ -1342,4 +1345,19 @@ void MainWindow::playAnimation()
 void MainWindow::selectTrajectory(int index)
 {
 	ui->renderarea->showJointTrajectory(index);
+}
+
+// update the range and interval for timeline slider
+void MainWindow::changeTimelineRangeAndInterval(int s,int e, int interval)
+{
+	ui->timelineSlider->setRange(s,e);
+	ui->timelineSlider->setTickInterval(interval);
+}
+
+/*
+	show the control window for timeline
+*/
+void MainWindow::showTimeLineControlWindow()
+{
+
 }

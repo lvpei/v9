@@ -171,7 +171,7 @@
      </rect>
     </property>
    </widget>
-   <widget class="QSlider" name="horizontalSlider">
+   <widget class="QSlider" name="timelineSlider">
     <property name="geometry">
      <rect>
       <x>490</x>
@@ -183,6 +183,45 @@
     <property name="orientation">
      <enum>Qt::Horizontal</enum>
     </property>
+    <property name="tickPosition">
+     <enum>QSlider::TicksAbove</enum>
+    </property>
+    <property name="tickInterval">
+     <number>0</number>
+    </property>
+   </widget>
+   <widget class="QWidget" name="">
+    <property name="geometry">
+     <rect>
+      <x>490</x>
+      <y>600</y>
+      <width>239</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout_3">
+     <item>
+      <widget class="QPushButton" name="playButton">
+       <property name="text">
+        <string>P</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="stopButton">
+       <property name="text">
+        <string>S</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="resetButton">
+       <property name="text">
+        <string>R</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -237,11 +276,18 @@
     <addaction name="actionSketching"/>
     <addaction name="actionViewing"/>
    </widget>
+   <widget class="QMenu" name="menuWindow">
+    <property name="title">
+     <string>Window</string>
+    </property>
+    <addaction name="actionTimeLine"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuView"/>
    <addaction name="menuTools"/>
    <addaction name="menuSettings"/>
    <addaction name="menuMode"/>
+   <addaction name="menuWindow"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QDockWidget" name="leftdockWidget">
@@ -555,6 +601,11 @@
     <string>Viewing</string>
    </property>
   </action>
+  <action name="actionTimeLine">
+   <property name="text">
+    <string>TimeLine</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
@@ -573,6 +624,10 @@
    <extends>QWidget</extends>
    <header>skeletonview.h</header>
    <container>1</container>
+   <slots>
+    <signal>updateRangeAndInterval(int,int,int)</signal>
+    <signal>updateStep(int)</signal>
+   </slots>
   </customwidget>
  </customwidgets>
  <resources/>
@@ -1057,6 +1112,38 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>animationWindow</sender>
+   <signal>updateStep(int)</signal>
+   <receiver>timelineSlider</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>851</x>
+     <y>389</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>769</x>
+     <y>606</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionTimeLine</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>showTimeLineControlWindow()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>267</x>
+     <y>16</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>233</x>
+     <y>692</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>exitProgram()</slot>
@@ -1092,5 +1179,6 @@
   <slot>setToSketchAnimation(bool)</slot>
   <slot>playAnimation()</slot>
   <slot>selectTrajectory(int)</slot>
+  <slot>showTimeLineControlWindow()</slot>
  </slots>
 </ui>

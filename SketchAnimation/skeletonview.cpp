@@ -121,7 +121,9 @@ void SkeletonView::initializeGL() {
 	floor_pos_ = Vector3d(0.,-0.1,0.);
 
 	// load the skeleton structure
-	m_pSkeleton = new Skeleton(".\\Resources\\boxing_13.asf",0.3);
+	//m_pSkeleton = new Skeleton(".\\Resources\\boxing_13.asf",0.3);
+	m_pSkeleton = new Skeleton("D:\\Siggraph2013\\v9\\SketchAnimation\\Resources\\walk_from_jianyuan_5_5\\jianyuan.asf",0.3);
+
 	if(!m_pSkeleton->isLoaded())
 		qDebug()<<"skeleton is not loaded";
 	else
@@ -643,6 +645,8 @@ void SkeletonView::updatePose()
 
 	m_pSkeleton->setPosture(m_vPostureSeq[frame]);
 
+	emit updateStep(frame);
+
 	frame++;
 
 	update();
@@ -656,6 +660,8 @@ void SkeletonView::receiveNewMotion(vector<Posture>& posture_arr)
 	startTimer();
 
 	m_bDrawSkeleton = true;
+
+	emit updateTimelineRangeAndInterval(0,m_vPostureSeq.size()-1,5);
 }
 
 void SkeletonView::startTimer()

@@ -98,4 +98,8 @@ private:
 	// emit signal to update the character pose
 	QTimer* m_pTimer;
 	bool m_bDrawSkeleton;
+
+signals:
+	void updateStep(int);
+	void updateTimelineRangeAndInterval(int, int, int);
 };

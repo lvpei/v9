@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'mainwindow.ui'
 **
-** Created: Tue Apr 30 20:39:18 2013
+** Created: Wed May 8 22:05:42 2013
 **      by: Qt User Interface Compiler version 4.8.2
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -69,7 +69,7 @@ public:
     QPushButton *playAnimation;
     QComboBox *selectTraj;
     SkeletonView *animationWindow;
-    QSlider *horizontalSlider;
+    QSlider *timelineSlider;
     QMenuBar *menubar;
     QMenu *menuFile;
     QMenu *menuTools;
@@ -211,10 +211,12 @@ public:
         animationWindow = new SkeletonView(centralwidget);
         animationWindow->setObjectName(QString::fromUtf8("animationWindow"));
         animationWindow->setGeometry(QRect(490, 19, 571, 541));
-        horizontalSlider = new QSlider(centralwidget);
-        horizontalSlider->setObjectName(QString::fromUtf8("horizontalSlider"));
-        horizontalSlider->setGeometry(QRect(490, 580, 571, 19));
-        horizontalSlider->setOrientation(Qt::Horizontal);
+        timelineSlider = new QSlider(centralwidget);
+        timelineSlider->setObjectName(QString::fromUtf8("timelineSlider"));
+        timelineSlider->setGeometry(QRect(490, 580, 571, 19));
+        timelineSlider->setOrientation(Qt::Horizontal);
+        timelineSlider->setTickPosition(QSlider::TicksAbove);
+        timelineSlider->setTickInterval(0);
         MainWindow->setCentralWidget(centralwidget);
         menubar = new QMenuBar(MainWindow);
         menubar->setObjectName(QString::fromUtf8("menubar"));
@@ -380,6 +382,7 @@ public:
         QObject::connect(radioButton_2, SIGNAL(toggled(bool)), MainWindow, SLOT(setToSketchAnimation(bool)));
         QObject::connect(playAnimation, SIGNAL(pressed()), MainWindow, SLOT(playAnimation()));
         QObject::connect(selectTraj, SIGNAL(currentIndexChanged(int)), MainWindow, SLOT(selectTrajectory(int)));
+        QObject::connect(animationWindow, SIGNAL(updateStep(int)), timelineSlider, SLOT(setValue(int)));
 
         QMetaObject::connectSlotsByName(MainWindow);
     } // setupUi

@@ -1,0 +1,5 @@
+"D:\Siggraph2013\v9\SketchAnimation\Resources\boxing\boxing_13_17_Take_001.amc",
+"D:\Siggraph2013\v9\SketchAnimation\Resources\boxing\boxing_13_17_Take_002.amc",
+"D:\Siggraph2013\v9\SketchAnimation\Resources\boxing\boxing_13_17_Take_003.amc",
+"D:\Siggraph2013\v9\SketchAnimation\Resources\boxing\boxing_13_17_Take_004.amc",
+"D:\Siggraph2013\v9\SketchAnimation\Resources\boxing\boxing_13_17_Take_005.amc"

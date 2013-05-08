@@ -143,6 +143,11 @@ private slots:
 	*/
 	void selectTrajectory(int index);
 
+	/*
+		show the control window for timeline
+	*/
+	void showTimeLineControlWindow();
+
 private:
 	QString strCurrentFileName;
 	QString strCurrentDBDir;
@@ -188,6 +193,9 @@ public slots:
 
 	// replay the process of drawing
 	void replay();
+
+	// update the range and interval for timeline slider
+	void changeTimelineRangeAndInterval(int,int,int);
 
 private:
 	// delete all the sketch images in tmp folder

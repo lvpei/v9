@@ -54,7 +54,8 @@ public slots:
 		dynamically show the shadow
 	 */
 	 void dynamicShadowHint();
- 	/*
+ 	
+	/*
 		capture the canvas
     */
 	 void screenCaptureAsPng();

@@ -44,6 +44,7 @@ QString hintStr[7] = {
 	"Torso", "Left Shoulder", "Left Arm","Right Shoulder","Right Arm","Left Leg","Right Leg"
 };
 
+/*
 char* motion_clip_filename[] = {
 	"Resources\\walk\\walk_02_01_Take_001.amc",
 	"Resources\\walk\\walk_05_01_Take_001.amc",
@@ -56,6 +57,56 @@ char* motion_clip_filename[] = {
 	"Resources\\walk\\walk_17_03_Take_001.amc",
 	"Resources\\walk\\walk_17_05_Take_001.amc"
 };
+//*/
+
+char* motion_clip_filename[] = {
+	"D:\\Siggraph2013\\v9\\SketchAnimation\\Resources\\walk_from_jianyuan_5_5\\ACTOR2-2.AMC",
+	"D:\\Siggraph2013\\v9\\SketchAnimation\\Resources\\walk_from_jianyuan_5_5\\Actor2.MickeySneakingWalk001_2.AMC",
+	"D:\\Siggraph2013\\v9\\SketchAnimation\\Resources\\walk_from_jianyuan_5_5\\CA232F-1.AMC",
+	"D:\\Siggraph2013\\v9\\SketchAnimation\\Resources\\walk_from_jianyuan_5_5\\CA8240-1.AMC",
+	"D:\\Siggraph2013\\v9\\SketchAnimation\\Resources\\walk_from_jianyuan_5_5\\CA864C-1.AMC",
+	"D:\\Siggraph2013\\v9\\SketchAnimation\\Resources\\walk_from_jianyuan_5_5\\CA8AF0-1.AMC",
+	"D:\\Siggraph2013\\v9\\SketchAnimation\\Resources\\walk_from_jianyuan_5_5\\CA9244-1.AMC",
+	"D:\\Siggraph2013\\v9\\SketchAnimation\\Resources\\walk_from_jianyuan_5_5\\CA924C-1.AMC",
+	"D:\\Siggraph2013\\v9\\SketchAnimation\\Resources\\walk_from_jianyuan_5_5\\CA9648-1.AMC",
+	"D:\\Siggraph2013\\v9\\SketchAnimation\\Resources\\walk_from_jianyuan_5_5\\CA964C-1.AMC",
+	"D:\\Siggraph2013\\v9\\SketchAnimation\\Resources\\walk_from_jianyuan_5_5\\CAA248-1.AMC",
+	"D:\\Siggraph2013\\v9\\SketchAnimation\\Resources\\walk_from_jianyuan_5_5\\CAA24C-1.AMC",
+	"D:\\Siggraph2013\\v9\\SketchAnimation\\Resources\\walk_from_jianyuan_5_5\\CAAA40-1.AMC",
+	"D:\\Siggraph2013\\v9\\SketchAnimation\\Resources\\walk_from_jianyuan_5_5\\CABD41-1.AMC",
+	"D:\\Siggraph2013\\v9\\SketchAnimation\\Resources\\walk_from_jianyuan_5_5\\Capture.male.cmale-direction10_2.AMC",
+	"D:\\Siggraph2013\\v9\\SketchAnimation\\Resources\\walk_from_jianyuan_5_5\\Capture.male.cmale-direction2.AMC",
+	"D:\\Siggraph2013\\v9\\SketchAnimation\\Resources\\walk_from_jianyuan_5_5\\Capture.male.cmale-speed1.AMC",
+	"D:\\Siggraph2013\\v9\\SketchAnimation\\Resources\\walk_from_jianyuan_5_5\\Capture.male.cmale-speed9.AMC",
+	"D:\\Siggraph2013\\v9\\SketchAnimation\\Resources\\walk_from_jianyuan_5_5\\Capture.male.lowhead4.AMC",
+	"D:\\Siggraph2013\\v9\\SketchAnimation\\Resources\\walk_from_jianyuan_5_5\\Capture.male.stepsize1.AMC",
+	"D:\\Siggraph2013\\v9\\SketchAnimation\\Resources\\walk_from_jianyuan_5_5\\Capture.male.style12.AMC",
+	"D:\\Siggraph2013\\v9\\SketchAnimation\\Resources\\walk_from_jianyuan_5_5\\Capture.male.style15.AMC",
+	"D:\\Siggraph2013\\v9\\SketchAnimation\\Resources\\walk_from_jianyuan_5_5\\Capture.male.style17.AMC",
+	"D:\\Siggraph2013\\v9\\SketchAnimation\\Resources\\walk_from_jianyuan_5_5\\Capture.male.style18.AMC",
+	"D:\\Siggraph2013\\v9\\SketchAnimation\\Resources\\walk_from_jianyuan_5_5\\Capture.male.style21.AMC",
+	"D:\\Siggraph2013\\v9\\SketchAnimation\\Resources\\walk_from_jianyuan_5_5\\Capture.male.style24.AMC",
+	"D:\\Siggraph2013\\v9\\SketchAnimation\\Resources\\walk_from_jianyuan_5_5\\Capture.male.style25.AMC",
+	"D:\\Siggraph2013\\v9\\SketchAnimation\\Resources\\walk_from_jianyuan_5_5\\Capture.male.style6.AMC",
+	"D:\\Siggraph2013\\v9\\SketchAnimation\\Resources\\walk_from_jianyuan_5_5\\Capture.male.style_2.AMC",
+	"D:\\Siggraph2013\\v9\\SketchAnimation\\Resources\\walk_from_jianyuan_5_5\\justine2.walk_climbover_004.AMC",
+	"D:\\Siggraph2013\\v9\\SketchAnimation\\Resources\\walk_from_jianyuan_5_5\\justine2.walk_slopes_002.AMC",
+	"D:\\Siggraph2013\\v9\\SketchAnimation\\Resources\\walk_from_jianyuan_5_5\\male.Mope.AMC",
+	"D:\\Siggraph2013\\v9\\SketchAnimation\\Resources\\walk_from_jianyuan_5_5\\male.pick_005.AMC",
+	"D:\\Siggraph2013\\v9\\SketchAnimation\\Resources\\walk_from_jianyuan_5_5\\male.walking-directions.AMC"
+};
+//*/
+
+/*
+char* motion_clip_filename[] = {
+	"D:\\Siggraph2013\\v9\\sketchAnimation\\Resources\\boxing\\boxing_13_17_Take_001.amc",
+	"D:\\Siggraph2013\\v9\\sketchAnimation\\Resources\\boxing\\boxing_13_17_Take_002.amc",
+	"D:\\Siggraph2013\\v9\\sketchAnimation\\Resources\\boxing\\boxing_13_17_Take_003.amc",
+	"D:\\Siggraph2013\\v9\\sketchAnimation\\Resources\\boxing\\boxing_13_17_Take_004.amc",
+	"D:\\Siggraph2013\\v9\\sketchAnimation\\Resources\\boxing\\boxing_13_17_Take_005.amc"
+};
+//*/
+
 RenderArea::RenderArea(QWidget *parent)
 	: QGLWidget(QGLFormat(QGL::AlphaChannel|QGL::SampleBuffers), parent)
 {
@@ -1258,13 +1309,14 @@ void RenderArea::setDBDir(QString dir)
 void RenderArea::setDBDir(const vector<QString>& baseDir, vector<DatabaseUnit>& databaseHierarchy)
 {
 	// load the trajectory of the joint movement
-	loadMotionClipsFromFile("test.xml");
+	loadMotionClipsFromFile("test_for_jianyuan_walk.xml");
+	//loadMotionClipsFromFile("boxing_13_17_Take_001-005.xml");
 
 	for(int i = 0; i < m_vMotionClip.size(); i++)
 		motion_clip_index.push_back(i);
 
-	//int start,end;
-	//loadMocapData(motion_clip_filename[0],"amc",&start,&end);
+	int start,end;
+	loadMocapData(motion_clip_filename[0],"amc",&start,&end);
 
 	//return;
 
@@ -1527,7 +1579,9 @@ void RenderArea::initializeGL()
 	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);             // Really Nice Perspective Calculations
 
 	// load the skeleton structure
-	m_pSkeleton = new Skeleton(".\\Resources\\boxing_13.asf",SKELETON_SCALE);
+	//m_pSkeleton = new Skeleton(".\\Resources\\boxing_13.asf",SKELETON_SCALE);
+	m_pSkeleton = new Skeleton("D:\\Siggraph2013\\v9\\SketchAnimation\\Resources\\walk_from_jianyuan_5_5\\jianyuan.asf",SKELETON_SCALE);
+	
 	if(!m_pSkeleton->isLoaded())
 		qDebug()<<"skeleton is not loaded";
 	else
@@ -2526,7 +2580,7 @@ void RenderArea::visualizeBodyParts(int chainIdx)
 	/************************************************************************/
 	/* Seven sketches                                                       */
 	/************************************************************************/
-	/*
+	//*
 	m_vChainName.clear();
 	vector<string> chain;
 
@@ -2566,6 +2620,8 @@ void RenderArea::visualizeBodyParts(int chainIdx)
 	chain.push_back("rtibia");
 	m_vChainName.push_back(chain);
 	//*/
+
+	/*
 	m_vChainName.clear();
 	vector<string> chain;
 
@@ -2604,7 +2660,8 @@ void RenderArea::visualizeBodyParts(int chainIdx)
 	chain.push_back("rfemur");
 	chain.push_back("rtibia");
 	m_vChainName.push_back(chain);
-	
+	//*/
+
 	update();
 }
 
@@ -4161,11 +4218,16 @@ void RenderArea::drawSketchingPoseInterface()
 */
 void RenderArea::drawSketchingAnimationInterface()
 {
+	Vector3d global_pos(0.0,0.0,0.0);
 	if(m_pMotion)
 	{
 		Posture posture;
 
 		posture = *m_pMotion->GetPosture(0);
+
+		global_pos.x = posture.root_pos[0];
+		global_pos.y = posture.root_pos[1];
+		global_pos.z = posture.root_pos[2];
 
 		// align the root to the origin
 		posture.root_pos[0] = posture.bone_translation[0][0] = 0.0;
@@ -4201,16 +4263,19 @@ void RenderArea::drawSketchingAnimationInterface()
 	
 	Bone* bone = m_pSkeleton->getBone(m_pSkeleton->getRoot(),idx);
 	
-	Vector3d global_pos;
-	global_pos.x = bone->m_GlobalPosition[0];
-	global_pos.y = bone->m_GlobalPosition[1];
-	global_pos.z = bone->m_GlobalPosition[2];
+	//Vector3d global_pos;
+	//global_pos.x = bone->m_GlobalPosition[0];
+	//global_pos.y = bone->m_GlobalPosition[1];
+	//global_pos.z = bone->m_GlobalPosition[2];
 
 	// line width
 	int motion_clip_num = m_vMotionClip.size();
 
 	float linwidth = 5.0 / motion_clip_num;
 	float color = 1.0 / motion_clip_num;
+
+	glPushMatrix();
+	glTranslatef(-global_pos.x , -global_pos.y ,-global_pos.z );
 
 	// show the joint trajectory
 	for(int clip_idx = 0; clip_idx < motion_clip_num; clip_idx++)
@@ -4220,25 +4285,32 @@ void RenderArea::drawSketchingAnimationInterface()
 
 		int num_frame = vPos.size();
 
-		Vector3d vtmp = vPos[0] * .6;
+		Vector3d vtmp = vPos[0];
 
-		glPushMatrix();
+		//glPushMatrix();
 		// for translation
-		glTranslatef(global_pos.x - vtmp.x,global_pos.y - vtmp.y,global_pos.z - vtmp.z);
+		//glTranslatef(global_pos.x - vtmp.x,global_pos.y - vtmp.y,global_pos.z - vtmp.z);
 		// for rotation
 
 		glLineWidth((motion_clip_num - clip_idx) * linwidth);
 		glColor3f((motion_clip_num - clip_idx) * color,(motion_clip_num - clip_idx) * color,(motion_clip_num - clip_idx) * color);
 
+		/*
+		int ix = (motion_clip_num - clip_idx) * (m_vColormap.size() - 1) / motion_clip_num;
+		// use the colormap to describe the probability
+		glColor3f(m_vColormap[ix][0],m_vColormap[ix][1],m_vColormap[ix][2]);
+		//*/
+
 		glBegin(GL_LINE_STRIP);
 		for(int j = 0; j < num_frame; j++)
 		{
-			vtmp = vPos[j] * .6;
+			vtmp = vPos[j];
 			glVertex3f(vtmp.getX(),vtmp.getY(),vtmp.getZ());
 		}
 		glEnd();
-		glPopMatrix();
+		//glPopMatrix();
 	}
+	glPopMatrix();
 
 	glDepthMask(GL_TRUE);
 	glDisable(GL_BLEND);
@@ -4250,7 +4322,7 @@ void RenderArea::drawSketchingAnimationInterface()
 void RenderArea::updateCandidateAnimationSets(const vector<QPoint>& sketch_curve_feature)
 {
 	// The global position of initial character pose
-	char* joint_name[] = {"root","lradius","rradius","ltibia","rtibia"};
+	/*char* joint_name[] = {"root","lradius","rradius","ltibia","rtibia"};
 
 	int idx = m_pSkeleton->name2idx(joint_name[m_iShowTrajectoryIndex]);
 
@@ -4259,7 +4331,20 @@ void RenderArea::updateCandidateAnimationSets(const vector<QPoint>& sketch_curve
 	Vector3d global_pos;
 	global_pos.x = bone->m_GlobalPosition[0];
 	global_pos.y = bone->m_GlobalPosition[1];
-	global_pos.z = bone->m_GlobalPosition[2];
+	global_pos.z = bone->m_GlobalPosition[2];*/
+
+	Vector3d global_pos(0.0,0.0,0.0);
+	if(m_pMotion)
+	{
+		Posture posture;
+
+		posture = *m_pMotion->GetPosture(0);
+
+		global_pos.x = posture.root_pos[0];
+		global_pos.y = posture.root_pos[1];
+		global_pos.z = posture.root_pos[2];
+	}
+
 
 	// compute the distance between features
 	int dim_of_feature = sketch_curve_feature.size();
@@ -4278,13 +4363,14 @@ void RenderArea::updateCandidateAnimationSets(const vector<QPoint>& sketch_curve
 
 		vector<Vector3d>& traj3D = m_vMotionClip[i]->m_vJointTrajByPos[m_iShowTrajectoryIndex];
 		
-		// The first point
-		Vector3d vtmp = traj3D[0] * .6;
-
 		// The new model-view matrix
 		GLdouble model_view_matrix[16];
 		memcpy(model_view_matrix,m_vModelViewMatrix,sizeof(double) * 16);
+		/*model_view_matrix[3] -= global_pos[0];
+		model_view_matrix[7] -= global_pos[1];
+		model_view_matrix[11] -= global_pos[2];*/
 
+		Vector3d vtmp;
 		GLdouble win[3];
 		QPoint point2D;
 
@@ -4292,7 +4378,7 @@ void RenderArea::updateCandidateAnimationSets(const vector<QPoint>& sketch_curve
 		// project these 3D points to 2D
 		for(int j = 0; j < traj3D.size(); j++)
 		{
-			vtmp = traj3D[j] * .6 + (global_pos - traj3D[0] * .6);
+			vtmp = traj3D[j] - global_pos;
 			gluProject(vtmp.x,vtmp.y,vtmp.z,model_view_matrix,m_vProjectionMatrix,m_vViewPort,&win[0],&win[1],&win[2]);
 
 			point2D.setX(win[0]);
@@ -4332,7 +4418,7 @@ void RenderArea::updateCandidateAnimationSets(const vector<QPoint>& sketch_curve
 			min_dist = dist;
 			cloest_motion_clip = i;
 		}
-		qDebug()<<"The distance between "<<idx<<" trajectory and "<< i << " trajectory is "<<dist<<endl;
+		qDebug()<<"The distance between the user's sketched trajectory and "<< i << " trajectory is "<<dist<<endl;
 
 		// sort motion clip index array according to the distance
 		// insert sorting
