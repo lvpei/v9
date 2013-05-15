@@ -116,8 +116,9 @@ RenderArea::RenderArea(QWidget *parent)
 	image = QImage(IMAGE_SIZE,IMAGE_SIZE,QImage::Format_ARGB32);  //32bit color with size is 720,720
 	backColor = qRgba(255,255,255,0);				//initial background color is white, transparent
 	image.fill(backColor);
-	resultImage = backImage = gridImage = styleUsrDrawingImage = image;
-
+	resultImage = backImage = gridImage = styleUsrDrawingImage = blackBackgroundImage = image;
+	blackBackgroundImage.fill(qRgba(0,0,0,0));
+	
 	shape = LINE;
 	pen.setWidth(1);
 	m_bShowGrid = true;
@@ -204,6 +205,8 @@ RenderArea::RenderArea(QWidget *parent)
 	m_TrajectoryFeature.resize(5);
 
 	m_pSkeleton = NULL;
+
+	m_Translation = QPoint(0,0);
 }
 
 RenderArea::~RenderArea()
@@ -316,49 +319,50 @@ void RenderArea::paintEvent(QPaintEvent * /* event */)
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 		drawNavigationBall();
 		glDisable(GL_BLEND);
-	}
 
-	if(behaviorMode == VIEW && m_iAxisIdx == 0)
-	{
-		const int BUFFERSIZE = 512;
-		GLuint selectBuf[BUFFERSIZE];
-		GLint hits = -1;
-		GLint viewport[4];
-		glGetIntegerv(GL_VIEWPORT,viewport);
-		glSelectBuffer(BUFFERSIZE,selectBuf);
-		glRenderMode(GL_SELECT);
-
-		glInitNames();
-		glPushName(0);
-
-		glMatrixMode(GL_PROJECTION);
-		glPushMatrix();
-		glLoadIdentity();
-
-		// projection matrix
-		gluPickMatrix(m_iPickX,viewport[3] - m_iPickY,4,4,viewport);
-		glMultMatrixd(m_vProjectionMatrix);
-
-		glMatrixMode(GL_MODELVIEW);
-
-		// draw navigation ball
-		drawNavigationBall();
-
-		// draw the character
-		//m_pSkeleton->RenderFigure(bone_color,joint_color);
-
-		// restore the original project matrix
-		glMatrixMode(GL_PROJECTION);
-		glPopMatrix();
-		glFlush();
-
-		hits = glRenderMode(GL_RENDER);	
-		if(hits > 0 && selectBuf[0])
+		if(m_iAxisIdx == 0)
 		{
-			processSelection(hits,selectBuf);
+			const int BUFFERSIZE = 512;
+			GLuint selectBuf[BUFFERSIZE];
+			GLint hits = -1;
+			GLint viewport[4];
+			glGetIntegerv(GL_VIEWPORT,viewport);
+			glSelectBuffer(BUFFERSIZE,selectBuf);
+			glRenderMode(GL_SELECT);
+
+			glInitNames();
+			glPushName(0);
+
+			glMatrixMode(GL_PROJECTION);
+			glPushMatrix();
+			glLoadIdentity();
+
+			// projection matrix
+			gluPickMatrix(m_iPickX - m_Translation.x(),viewport[3] - m_iPickY + m_Translation.y(),4,4,viewport);
+			glMultMatrixd(m_vProjectionMatrix);
+
+			glMatrixMode(GL_MODELVIEW);
+
+			// draw navigation ball
+			drawNavigationBall();
+
+			// draw the character
+			//m_pSkeleton->RenderFigure(bone_color,joint_color);
+
+			// restore the original project matrix
+			glMatrixMode(GL_PROJECTION);
+			glPopMatrix();
+			glFlush();
+
+			hits = glRenderMode(GL_RENDER);	
+			if(hits > 0 && selectBuf[0])
+			{
+				processSelection(hits,selectBuf);
+			}
+			else
+				m_iAxisIdx = 0;						// no rotation circle is selected
+
 		}
-		else
-			m_iAxisIdx = 0;						// no rotation circle is selected
 	}
 
 	// 3d poses image
@@ -372,10 +376,12 @@ void RenderArea::paintEvent(QPaintEvent * /* event */)
 	painter.setCompositionMode(QPainter::CompositionMode_SourceOver);
 	if(m_b3DPose)	// 3D
 	{
+		painter.drawImage(0,0,blackBackgroundImage);
 		if(m_bShowShadow)
 		{
+			painter.setCompositionMode(QPainter::CompositionMode_SourceOver);	
 			// background
-			painter.drawImage(0,0,threedpose);	// candidate 3D poses
+			painter.drawImage(m_Translation.x(),m_Translation.y(),threedpose);	// candidate 3D poses
 		}
 
 		if(m_bShowSketch)
@@ -407,13 +413,14 @@ void RenderArea::paintEvent(QPaintEvent * /* event */)
 		}
 	}
 	
-	/*if(m_iSketchOrder < MAX_SKETCH_NUM)
+	if(m_iSketchOrder < MAX_SKETCH_NUM)
 	{
 	QFont serifFont("Times New Roman", 22, QFont::Bold);
 	painter.setFont(serifFont);
 	painter.setPen(QColor(aColor[m_iSketchOrder]));
 	painter.drawText(10,30,hintStr[m_iSketchOrder]);
-	}*/
+	}
+
 	painter.end();
 }
 
@@ -932,6 +939,8 @@ void RenderArea::mouseReleaseEvent(QMouseEvent * event)
 
 				// update candidate motion clips
 				updateCandidateAnimationSets(m_TrajectoryFeature[m_iShowTrajectoryIndex]);
+
+				m_Translation = computeTranslationBetweenJointAndSketching();
 			}
 		}
 	}
@@ -4216,22 +4225,10 @@ void RenderArea::drawSketchingAnimationInterface()
 
 		posture = *m_pMotion->GetPosture(0);
 
-		/*
-		global_pos.x = posture.root_pos[0];
-		global_pos.y = posture.root_pos[1];
-		global_pos.z = posture.root_pos[2];
-		//*/
-		//Vector3d translation = computeTranslationBetweenJointAndSketching();
-		//posture.root_pos[0] = posture.bone_translation[0][0] = translation.getX();
-		//posture.root_pos[1] = posture.bone_translation[0][1] = translation.getY();
-		//posture.root_pos[2] = posture.bone_translation[0][2] = translation.getZ();
-
 		// align the root to the origin
-		//*
 		posture.root_pos[0] = posture.bone_translation[0][0] = 0.0;
 		posture.root_pos[1] = posture.bone_translation[0][1] = 0.0;
 		posture.root_pos[2] = posture.bone_translation[0][2] = 0.0;
-		//*/
 
 		m_pSkeleton->setPosture(posture);
 	}
@@ -4289,7 +4286,10 @@ void RenderArea::drawSketchingAnimationInterface()
 		// for rotation
 
 		glLineWidth((motion_clip_num - clip_idx) * linwidth);
-		glColor3f((motion_clip_num - clip_idx) * color,(motion_clip_num - clip_idx) * color,(motion_clip_num - clip_idx) * color);
+		if(clip_idx == 0)
+			glColor3f(0.0,1.0,1.0);
+		else
+			glColor3f((motion_clip_num - clip_idx) * color,(motion_clip_num - clip_idx) * color,(motion_clip_num - clip_idx) * color);
 
 		/*
 		int ix = (motion_clip_num - clip_idx) * (m_vColormap.size() - 1) / motion_clip_num;
@@ -4314,39 +4314,6 @@ void RenderArea::drawSketchingAnimationInterface()
  */
 void RenderArea::updateCandidateAnimationSets(const vector<QPoint>& sketch_curve_feature)
 {
-	Vector3d global_pos(0.0,0.0,0.0);
-	if(m_pMotion)
-	{
-		Posture posture;
-
-		posture = *m_pMotion->GetPosture(0);
-
-		/*
-		posture.root_pos[0] = posture.bone_translation[0][0] = 0.0;
-		posture.root_pos[1] = posture.bone_translation[0][1] = 0.0;
-		posture.root_pos[2] = posture.bone_translation[0][2] = 0.0;
-
-		m_pSkeleton->setPosture(posture);
-		//*/
-
-		global_pos.x = posture.root_pos[0];
-		global_pos.y = posture.root_pos[1];
-		global_pos.z = posture.root_pos[2];
-	}
-	
-	char* joint_name[] = {"root","lradius","rradius","ltibia","rtibia"};
-
-	int idx = m_pSkeleton->name2idx(joint_name[m_iShowTrajectoryIndex]);
-
-	Bone* bone = m_pSkeleton->getBone(m_pSkeleton->getRoot(),idx);
-
-	/*
-	Vector3d global_pos;
-	global_pos.x = bone->m_GlobalPosition[0];
-	global_pos.y = bone->m_GlobalPosition[1];
-	global_pos.z = bone->m_GlobalPosition[2];
-	//*/
-
 	// compute the distance between features
 	int dim_of_feature = sketch_curve_feature.size();
 	double min_dist = DBL_MAX;
@@ -4361,8 +4328,9 @@ void RenderArea::updateCandidateAnimationSets(const vector<QPoint>& sketch_curve
 	backColor = qRgba(0,0,0,255);				//initial background color is white, transparent
 	tmp_image.fill(backColor);
 
-	QPainter pt(&tmp_image);
-	pt.setPen(QColor(255,255,0));
+	// for test
+	//QPainter pt(&tmp_image);
+	//pt.setPen(QColor(255,255,0));
 
 	for(int i = 0; i < m_vMotionClip.size(); i++)
 	{
@@ -4371,23 +4339,17 @@ void RenderArea::updateCandidateAnimationSets(const vector<QPoint>& sketch_curve
 
 		vector<Vector3d>& traj3D = m_vMotionClip[i]->m_vJointTrajByPos[m_iShowTrajectoryIndex];
 		
-		// The new model-view matrix
-		GLdouble model_view_matrix[16];
-		memcpy(model_view_matrix,m_vModelViewMatrix,sizeof(double) * 16);
-		/*model_view_matrix[3] -= global_pos[0];
-		model_view_matrix[7] -= global_pos[1];
-		model_view_matrix[11] -= global_pos[2];*/
-
 		Vector3d vtmp;
 		GLdouble win[3];
 		QPoint point2D;
 
 		vector<QPoint> prj2DArr;
+		
 		// project these 3D points to 2D
 		for(int j = 0; j < traj3D.size(); j++)
 		{
-			vtmp = traj3D[j] - global_pos;
-			gluProject(vtmp.x,vtmp.y,vtmp.z,model_view_matrix,m_vProjectionMatrix,m_vViewPort,&win[0],&win[1],&win[2]);
+			vtmp = traj3D[j];
+			gluProject(vtmp.x,vtmp.y,vtmp.z,m_vModelViewMatrix,m_vProjectionMatrix,m_vViewPort,&win[0],&win[1],&win[2]);
 
 			point2D.setX(win[0]);
 			point2D.setY(m_vViewPort[3] -  win[1]);
@@ -4395,10 +4357,10 @@ void RenderArea::updateCandidateAnimationSets(const vector<QPoint>& sketch_curve
 			prj2DArr.push_back(point2D);
 		}
 
-		for(int i = 1; i < prj2DArr.size(); i++)
-			pt.drawLine(prj2DArr[i-1],prj2DArr[i]);
-
 		// for test
+		/*for(int i = 1; i < prj2DArr.size(); i++)
+			pt.drawLine(prj2DArr[i-1],prj2DArr[i]);*/
+
 		/*
 		QImage tmp_image = QImage(IMAGE_SIZE,IMAGE_SIZE,QImage::Format_ARGB32);  //32bit color with size is 720,720
 		backColor = qRgba(0,0,0,255);				//initial background color is white, transparent
@@ -4456,7 +4418,7 @@ void RenderArea::updateCandidateAnimationSets(const vector<QPoint>& sketch_curve
 		}
 	}
 
-	pt.end();
+	//pt.end();
 
 	tmp_image.save("prj.png","png");
 
@@ -4510,51 +4472,53 @@ void RenderArea::extractMotionFeature(const vector<QPoint>& m_vPoints, vector<QP
 /*
 	compute the translation between certain joint and user's sketching
 */
-Vector3d RenderArea::computeTranslationBetweenJointAndSketching()
+QPoint RenderArea::computeTranslationBetweenJointAndSketching()
 {
-	Vector3d translation(0.0,0.0,0.0);
+	QPoint point2D(0,0);
 
 	if(m_vPoints.size() == 0)
-		return translation;
+		return point2D;
 
 	// the starting point on the screen from user's sketching
 	int sketch_screen_x = 0, sketch_screen_y = 0;
 	sketch_screen_x = m_vPoints[0].x();
 	sketch_screen_y = m_vPoints[0].y();
 	
-	// the starting point from the closest motion trajectory 
-	int traj_screen_x = 0, traj_screen_y = 0;
-	Vector3d global_pos(0.0,0.0,0.0);
+	// the selected joint projected onto the screen 
+	int bone_screen_x = 0, bone_screen_y = 0;
 	if(m_pMotion)
 	{
 		Posture posture;
 
 		posture = *m_pMotion->GetPosture(0);
 
-		global_pos.x = posture.root_pos[0];
-		global_pos.y = posture.root_pos[1];
-		global_pos.z = posture.root_pos[2];
+		posture.root_pos[0] = posture.bone_translation[0][0] = 0.0;
+		posture.root_pos[1] = posture.bone_translation[0][1] = 0.0;
+		posture.root_pos[2] = posture.bone_translation[0][2] = 0.0;
+
+		m_pSkeleton->setPosture(posture);
 	}
 
-	vector<Vector3d>& traj3D = m_vMotionClip[motion_clip_index[0]]->m_vJointTrajByPos[m_iShowTrajectoryIndex];
-	
-	Vector3d v3d = traj3D[0] - global_pos;
+	char* joint_name[] = {"root","lradius","rradius","ltibia","rtibia"};
 
-	// obtain the 3D position 
-	GLfloat winX, winY, winZ; 
-	GLdouble posX, posY, posZ; 
+	int idx = m_pSkeleton->name2idx(joint_name[m_iShowTrajectoryIndex]);
 
-	winX = (float)sketch_screen_x; 
-	winY = (float)m_vViewPort[3] - (float)sketch_screen_y;
-	winZ = v3d.getZ();
+	Bone* bone = m_pSkeleton->getBone(m_pSkeleton->getRoot(),idx);
 
-	gluUnProject(winX, winY, winZ, m_vModelViewMatrix, m_vProjectionMatrix, m_vViewPort, &posX, &posY, &posZ); 
+	Vector3d global_pos;
+	global_pos.x = bone->m_GlobalPosition[0];
+	global_pos.y = bone->m_GlobalPosition[1];
+	global_pos.z = bone->m_GlobalPosition[2];
 
-	translation.setX(posX - v3d.getX());
-	translation.setY(posY - v3d.getY());
-	translation.setZ(posZ - v3d.getZ());
+	GLdouble win[3];
 
-	return translation;
+	// project these 3D points to 2D
+	gluProject(global_pos.x,global_pos.y,global_pos.z,m_vModelViewMatrix,m_vProjectionMatrix,m_vViewPort,&win[0],&win[1],&win[2]);
+
+	point2D.setX(sketch_screen_x - (int)win[0]);
+	point2D.setY(sketch_screen_y - (int)(m_vViewPort[3] -  win[1]));
+
+	return point2D;
 }
 /*
 	select certain joint to show its trajectory

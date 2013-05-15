@@ -79,7 +79,7 @@ private:
 	 QImage threedpose;				// the 3d character pose image
 	 QImage threedline;				// the 3d line used for image matching
 	 QImage threedstyleline;		// the 3d line used for displaying
-
+	 QImage blackBackgroundImage;	// the black background image 
      QRgb backColor;				// QRgb color, store the color of canvas background
 	 QPoint point;					// the mouse position
 	 vector<QPoint> m_vPoints;		// the 2d points which mouse moves along
@@ -160,6 +160,9 @@ private:
 	// the feature for trajectories
 	vector< vector<QPoint> > m_TrajectoryFeature;
 	int m_iShowTrajectoryIndex;
+
+	// alignment the user's sketching with character's pose
+	QPoint m_Translation;
 
 public:
 	 BVH*	 m_pBvh;						// BVH file
@@ -271,7 +274,7 @@ private:
 	 /*
 		compute the translation between certain joint and user's sketching
 	 */
-	 Vector3d computeTranslationBetweenJointAndSketching();
+	 QPoint computeTranslationBetweenJointAndSketching();
 
  public:
 	 bool isContentChanged();
