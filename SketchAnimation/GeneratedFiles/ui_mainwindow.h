@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'mainwindow.ui'
 **
-** Created: Wed May 8 22:05:42 2013
+** Created: Tue May 14 10:30:27 2013
 **      by: Qt User Interface Compiler version 4.8.2
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -55,6 +55,7 @@ public:
     QAction *actionTest;
     QAction *actionSketching;
     QAction *actionViewing;
+    QAction *actionTimeLine;
     QWidget *centralwidget;
     RenderArea *renderarea;
     QGroupBox *groupBox_3;
@@ -70,12 +71,18 @@ public:
     QComboBox *selectTraj;
     SkeletonView *animationWindow;
     QSlider *timelineSlider;
+    QWidget *widget;
+    QHBoxLayout *horizontalLayout_3;
+    QPushButton *playButton;
+    QPushButton *stopButton;
+    QPushButton *resetButton;
     QMenuBar *menubar;
     QMenu *menuFile;
     QMenu *menuTools;
     QMenu *menuView;
     QMenu *menuSettings;
     QMenu *menuMode;
+    QMenu *menuWindow;
     QStatusBar *statusbar;
     QDockWidget *leftdockWidget;
     QWidget *toolsdockWidgetContents;
@@ -153,6 +160,8 @@ public:
         actionViewing = new QAction(MainWindow);
         actionViewing->setObjectName(QString::fromUtf8("actionViewing"));
         actionViewing->setCheckable(true);
+        actionTimeLine = new QAction(MainWindow);
+        actionTimeLine->setObjectName(QString::fromUtf8("actionTimeLine"));
         centralwidget = new QWidget(MainWindow);
         centralwidget->setObjectName(QString::fromUtf8("centralwidget"));
         sizePolicy.setHeightForWidth(centralwidget->sizePolicy().hasHeightForWidth());
@@ -217,6 +226,27 @@ public:
         timelineSlider->setOrientation(Qt::Horizontal);
         timelineSlider->setTickPosition(QSlider::TicksAbove);
         timelineSlider->setTickInterval(0);
+        widget = new QWidget(centralwidget);
+        widget->setObjectName(QString::fromUtf8("widget"));
+        widget->setGeometry(QRect(490, 600, 239, 25));
+        horizontalLayout_3 = new QHBoxLayout(widget);
+        horizontalLayout_3->setObjectName(QString::fromUtf8("horizontalLayout_3"));
+        horizontalLayout_3->setContentsMargins(0, 0, 0, 0);
+        playButton = new QPushButton(widget);
+        playButton->setObjectName(QString::fromUtf8("playButton"));
+
+        horizontalLayout_3->addWidget(playButton);
+
+        stopButton = new QPushButton(widget);
+        stopButton->setObjectName(QString::fromUtf8("stopButton"));
+
+        horizontalLayout_3->addWidget(stopButton);
+
+        resetButton = new QPushButton(widget);
+        resetButton->setObjectName(QString::fromUtf8("resetButton"));
+
+        horizontalLayout_3->addWidget(resetButton);
+
         MainWindow->setCentralWidget(centralwidget);
         menubar = new QMenuBar(MainWindow);
         menubar->setObjectName(QString::fromUtf8("menubar"));
@@ -231,6 +261,8 @@ public:
         menuSettings->setObjectName(QString::fromUtf8("menuSettings"));
         menuMode = new QMenu(menubar);
         menuMode->setObjectName(QString::fromUtf8("menuMode"));
+        menuWindow = new QMenu(menubar);
+        menuWindow->setObjectName(QString::fromUtf8("menuWindow"));
         MainWindow->setMenuBar(menubar);
         statusbar = new QStatusBar(MainWindow);
         statusbar->setObjectName(QString::fromUtf8("statusbar"));
@@ -332,6 +364,7 @@ public:
         menubar->addAction(menuTools->menuAction());
         menubar->addAction(menuSettings->menuAction());
         menubar->addAction(menuMode->menuAction());
+        menubar->addAction(menuWindow->menuAction());
         menuFile->addAction(actionNew);
         menuFile->addAction(actionOpen);
         menuFile->addAction(actionImport);
@@ -350,6 +383,7 @@ public:
         menuSettings->addAction(actionSetWorkingDirectory);
         menuMode->addAction(actionSketching);
         menuMode->addAction(actionViewing);
+        menuWindow->addAction(actionTimeLine);
 
         retranslateUi(MainWindow);
         QObject::connect(actionExit, SIGNAL(triggered()), MainWindow, SLOT(exitProgram()));
@@ -383,6 +417,7 @@ public:
         QObject::connect(playAnimation, SIGNAL(pressed()), MainWindow, SLOT(playAnimation()));
         QObject::connect(selectTraj, SIGNAL(currentIndexChanged(int)), MainWindow, SLOT(selectTrajectory(int)));
         QObject::connect(animationWindow, SIGNAL(updateStep(int)), timelineSlider, SLOT(setValue(int)));
+        QObject::connect(actionTimeLine, SIGNAL(triggered()), MainWindow, SLOT(showTimeLineControlWindow()));
 
         QMetaObject::connectSlotsByName(MainWindow);
     } // setupUi
@@ -408,6 +443,7 @@ public:
         actionTest->setText(QApplication::translate("MainWindow", "Test", 0, QApplication::UnicodeUTF8));
         actionSketching->setText(QApplication::translate("MainWindow", "Sketching", 0, QApplication::UnicodeUTF8));
         actionViewing->setText(QApplication::translate("MainWindow", "Viewing", 0, QApplication::UnicodeUTF8));
+        actionTimeLine->setText(QApplication::translate("MainWindow", "TimeLine", 0, QApplication::UnicodeUTF8));
         groupBox_3->setTitle(QString());
         radioButton->setText(QApplication::translate("MainWindow", "Pose", 0, QApplication::UnicodeUTF8));
         radioButton_2->setText(QApplication::translate("MainWindow", "Animation", 0, QApplication::UnicodeUTF8));
@@ -422,11 +458,15 @@ public:
          << QApplication::translate("MainWindow", "l_foot", 0, QApplication::UnicodeUTF8)
          << QApplication::translate("MainWindow", "r_foot", 0, QApplication::UnicodeUTF8)
         );
+        playButton->setText(QApplication::translate("MainWindow", "P", 0, QApplication::UnicodeUTF8));
+        stopButton->setText(QApplication::translate("MainWindow", "S", 0, QApplication::UnicodeUTF8));
+        resetButton->setText(QApplication::translate("MainWindow", "R", 0, QApplication::UnicodeUTF8));
         menuFile->setTitle(QApplication::translate("MainWindow", "File", 0, QApplication::UnicodeUTF8));
         menuTools->setTitle(QApplication::translate("MainWindow", "Tools", 0, QApplication::UnicodeUTF8));
         menuView->setTitle(QApplication::translate("MainWindow", "View", 0, QApplication::UnicodeUTF8));
         menuSettings->setTitle(QApplication::translate("MainWindow", "Settings", 0, QApplication::UnicodeUTF8));
         menuMode->setTitle(QApplication::translate("MainWindow", "Mode", 0, QApplication::UnicodeUTF8));
+        menuWindow->setTitle(QApplication::translate("MainWindow", "Window", 0, QApplication::UnicodeUTF8));
         leftdockWidget->setWindowTitle(QApplication::translate("MainWindow", "Tools", 0, QApplication::UnicodeUTF8));
         groupBox->setTitle(QApplication::translate("MainWindow", "Op", 0, QApplication::UnicodeUTF8));
         penmodeRadioButton->setText(QApplication::translate("MainWindow", "Pen", 0, QApplication::UnicodeUTF8));

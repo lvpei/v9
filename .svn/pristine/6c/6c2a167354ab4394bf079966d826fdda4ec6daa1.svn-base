@@ -268,11 +268,6 @@ private:
 	 */
 	 void extractMotionFeature(const vector<QPoint>&, vector<QPoint>&);
 
-	 /*
-		compute the translation between certain joint and user's sketching
-	 */
-	 Vector3d computeTranslationBetweenJointAndSketching();
-
  public:
 	 bool isContentChanged();
 	 void setContentChanged(bool);
@@ -386,7 +381,7 @@ private:
 	 /*
 		select certain joint to show its trajectory
 	 */
-	 void showJointTrajectory(int index);
+	 void showJointTrajectory(int index){m_iShowTrajectoryIndex = index;update();}
 
 signals:
 	void loadImages(const char* folder,int* ,double*,int size);

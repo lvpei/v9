@@ -256,6 +256,8 @@ void RenderArea::paintEvent(QPaintEvent * /* event */)
 {
 	makeCurrent();
 
+	//glEnable(GL_TEXTURE_2D);	// Enable Texture Mapping
+
 	glEnable(GL_MULTISAMPLE);
 
 	// clear the background to dark
@@ -299,6 +301,10 @@ void RenderArea::paintEvent(QPaintEvent * /* event */)
 
 	// draw the shadow
 	//drawShadow();
+
+	glEnable(GL_BLEND);
+	glDepthMask(GL_FALSE);
+	glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
 
 	if(m_bSketchPose)
 	{
@@ -367,6 +373,8 @@ void RenderArea::paintEvent(QPaintEvent * /* event */)
 	glMatrixMode(GL_MODELVIEW);
 	glPopMatrix();
 
+	//glDisable(GL_TEXTURE_2D);		// Disable Texture Mapping
+
 	QPainter painter(this);
 	// the background
 	painter.setCompositionMode(QPainter::CompositionMode_SourceOver);
@@ -382,8 +390,9 @@ void RenderArea::paintEvent(QPaintEvent * /* event */)
 		{
 			// foreground
 			painter.setCompositionMode(QPainter::CompositionMode_SourceOver);	
-			//painter.drawImage(0,0,threedstyleline);		// user's sketch
+			//painter.drawImage(0,0,threedstyleline);	// user's sketch
 			painter.drawImage(0,0,styleUsrDrawingImage);	// user's sketch
+
 		}
 	}
 	else	// 2D
@@ -407,13 +416,13 @@ void RenderArea::paintEvent(QPaintEvent * /* event */)
 		}
 	}
 	
-	/*if(m_iSketchOrder < MAX_SKETCH_NUM)
+	if(m_iSketchOrder < MAX_SKETCH_NUM)
 	{
-	QFont serifFont("Times New Roman", 22, QFont::Bold);
-	painter.setFont(serifFont);
-	painter.setPen(QColor(aColor[m_iSketchOrder]));
-	painter.drawText(10,30,hintStr[m_iSketchOrder]);
-	}*/
+		QFont serifFont("Times New Roman", 22, QFont::Bold);
+		painter.setFont(serifFont);
+		painter.setPen(QColor(aColor[m_iSketchOrder]));
+		painter.drawText(10,30,hintStr[m_iSketchOrder]);
+	}
 	painter.end();
 }
 
@@ -891,11 +900,11 @@ void RenderArea::mouseReleaseEvent(QMouseEvent * event)
 
 			//return;
 
-			m_bStartUp = false;
 			// The user is sketching a character pose
 			if(m_bSketchPose)
 			{
 				// indicate the sketch has began
+				m_bStartUp = false;
 
 				// The database is not loaded
 				if(m_iViewNum == 0)
@@ -4209,29 +4218,21 @@ void RenderArea::drawSketchingPoseInterface()
 */
 void RenderArea::drawSketchingAnimationInterface()
 {
-	//Vector3d global_pos(0.0,0.0,0.0);
+	Vector3d global_pos(0.0,0.0,0.0);
 	if(m_pMotion)
 	{
 		Posture posture;
 
 		posture = *m_pMotion->GetPosture(0);
 
-		/*
 		global_pos.x = posture.root_pos[0];
 		global_pos.y = posture.root_pos[1];
 		global_pos.z = posture.root_pos[2];
-		//*/
-		//Vector3d translation = computeTranslationBetweenJointAndSketching();
-		//posture.root_pos[0] = posture.bone_translation[0][0] = translation.getX();
-		//posture.root_pos[1] = posture.bone_translation[0][1] = translation.getY();
-		//posture.root_pos[2] = posture.bone_translation[0][2] = translation.getZ();
 
 		// align the root to the origin
-		//*
 		posture.root_pos[0] = posture.bone_translation[0][0] = 0.0;
 		posture.root_pos[1] = posture.bone_translation[0][1] = 0.0;
 		posture.root_pos[2] = posture.bone_translation[0][2] = 0.0;
-		//*/
 
 		m_pSkeleton->setPosture(posture);
 	}
@@ -4242,7 +4243,10 @@ void RenderArea::drawSketchingAnimationInterface()
 	GLfloat cs_aSketchedJointColor[4]= {0.9f, 0.2f, 0.2f, 1.0f};
 
 	// draw the character
-	vSketchedBones.clear();
+	glEnable(GL_BLEND);
+	glDepthMask(GL_FALSE);
+	glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
+
 	for(int i = 0; i < m_vChainName.size(); i++)
 	{
 		for(int bone_in_chain = 0; bone_in_chain < m_vChainName[i].size(); bone_in_chain++)
@@ -4259,10 +4263,10 @@ void RenderArea::drawSketchingAnimationInterface()
 	
 	Bone* bone = m_pSkeleton->getBone(m_pSkeleton->getRoot(),idx);
 	
-	Vector3d global_pos;
-	global_pos.x = bone->m_GlobalPosition[0];
-	global_pos.y = bone->m_GlobalPosition[1];
-	global_pos.z = bone->m_GlobalPosition[2];
+	//Vector3d global_pos;
+	//global_pos.x = bone->m_GlobalPosition[0];
+	//global_pos.y = bone->m_GlobalPosition[1];
+	//global_pos.z = bone->m_GlobalPosition[2];
 
 	// line width
 	int motion_clip_num = m_vMotionClip.size();
@@ -4270,8 +4274,8 @@ void RenderArea::drawSketchingAnimationInterface()
 	float linwidth = 5.0 / motion_clip_num;
 	float color = 1.0 / motion_clip_num;
 
-	//glPushMatrix();
-	//glTranslatef(-global_pos.x , -global_pos.y ,-global_pos.z );
+	glPushMatrix();
+	glTranslatef(-global_pos.x , -global_pos.y ,-global_pos.z );
 
 	// show the joint trajectory
 	for(int clip_idx = 0; clip_idx < motion_clip_num; clip_idx++)
@@ -4283,9 +4287,9 @@ void RenderArea::drawSketchingAnimationInterface()
 
 		Vector3d vtmp = vPos[0];
 
-		glPushMatrix();
+		//glPushMatrix();
 		// for translation
-		glTranslatef(global_pos.x - vtmp.x,global_pos.y - vtmp.y,global_pos.z - vtmp.z);
+		//glTranslatef(global_pos.x - vtmp.x,global_pos.y - vtmp.y,global_pos.z - vtmp.z);
 		// for rotation
 
 		glLineWidth((motion_clip_num - clip_idx) * linwidth);
@@ -4304,9 +4308,12 @@ void RenderArea::drawSketchingAnimationInterface()
 			glVertex3f(vtmp.getX(),vtmp.getY(),vtmp.getZ());
 		}
 		glEnd();
-		glPopMatrix();
+		//glPopMatrix();
 	}
-	//glPopMatrix();
+	glPopMatrix();
+
+	glDepthMask(GL_TRUE);
+	glDisable(GL_BLEND);
 }
 
  /*
@@ -4314,6 +4321,18 @@ void RenderArea::drawSketchingAnimationInterface()
  */
 void RenderArea::updateCandidateAnimationSets(const vector<QPoint>& sketch_curve_feature)
 {
+	// The global position of initial character pose
+	/*char* joint_name[] = {"root","lradius","rradius","ltibia","rtibia"};
+
+	int idx = m_pSkeleton->name2idx(joint_name[m_iShowTrajectoryIndex]);
+
+	Bone* bone = m_pSkeleton->getBone(m_pSkeleton->getRoot(),idx);
+
+	Vector3d global_pos;
+	global_pos.x = bone->m_GlobalPosition[0];
+	global_pos.y = bone->m_GlobalPosition[1];
+	global_pos.z = bone->m_GlobalPosition[2];*/
+
 	Vector3d global_pos(0.0,0.0,0.0);
 	if(m_pMotion)
 	{
@@ -4321,31 +4340,11 @@ void RenderArea::updateCandidateAnimationSets(const vector<QPoint>& sketch_curve
 
 		posture = *m_pMotion->GetPosture(0);
 
-		/*
-		posture.root_pos[0] = posture.bone_translation[0][0] = 0.0;
-		posture.root_pos[1] = posture.bone_translation[0][1] = 0.0;
-		posture.root_pos[2] = posture.bone_translation[0][2] = 0.0;
-
-		m_pSkeleton->setPosture(posture);
-		//*/
-
 		global_pos.x = posture.root_pos[0];
 		global_pos.y = posture.root_pos[1];
 		global_pos.z = posture.root_pos[2];
 	}
-	
-	char* joint_name[] = {"root","lradius","rradius","ltibia","rtibia"};
 
-	int idx = m_pSkeleton->name2idx(joint_name[m_iShowTrajectoryIndex]);
-
-	Bone* bone = m_pSkeleton->getBone(m_pSkeleton->getRoot(),idx);
-
-	/*
-	Vector3d global_pos;
-	global_pos.x = bone->m_GlobalPosition[0];
-	global_pos.y = bone->m_GlobalPosition[1];
-	global_pos.z = bone->m_GlobalPosition[2];
-	//*/
 
 	// compute the distance between features
 	int dim_of_feature = sketch_curve_feature.size();
@@ -4356,13 +4355,6 @@ void RenderArea::updateCandidateAnimationSets(const vector<QPoint>& sketch_curve
 
 	motion_clip_index.clear();
 	motion_clip_index.resize(m_vMotionClip.size());
-
-	QImage tmp_image = QImage(IMAGE_SIZE,IMAGE_SIZE,QImage::Format_ARGB32);  //32bit color with size is 720,720
-	backColor = qRgba(0,0,0,255);				//initial background color is white, transparent
-	tmp_image.fill(backColor);
-
-	QPainter pt(&tmp_image);
-	pt.setPen(QColor(255,255,0));
 
 	for(int i = 0; i < m_vMotionClip.size(); i++)
 	{
@@ -4394,9 +4386,6 @@ void RenderArea::updateCandidateAnimationSets(const vector<QPoint>& sketch_curve
 			
 			prj2DArr.push_back(point2D);
 		}
-
-		for(int i = 1; i < prj2DArr.size(); i++)
-			pt.drawLine(prj2DArr[i-1],prj2DArr[i]);
 
 		// for test
 		/*
@@ -4456,10 +4445,6 @@ void RenderArea::updateCandidateAnimationSets(const vector<QPoint>& sketch_curve
 		}
 	}
 
-	pt.end();
-
-	tmp_image.save("prj.png","png");
-
 	qDebug()<<"The closest motion clip is "<< cloest_motion_clip<<endl;
 	loadMocapData(motion_clip_filename[cloest_motion_clip],"amc");
 }
@@ -4505,65 +4490,4 @@ void RenderArea::extractMotionFeature(const vector<QPoint>& m_vPoints, vector<QP
 
 		feature.push_back(f);
 	}
-}
-
-/*
-	compute the translation between certain joint and user's sketching
-*/
-Vector3d RenderArea::computeTranslationBetweenJointAndSketching()
-{
-	Vector3d translation(0.0,0.0,0.0);
-
-	if(m_vPoints.size() == 0)
-		return translation;
-
-	// the starting point on the screen from user's sketching
-	int sketch_screen_x = 0, sketch_screen_y = 0;
-	sketch_screen_x = m_vPoints[0].x();
-	sketch_screen_y = m_vPoints[0].y();
-	
-	// the starting point from the closest motion trajectory 
-	int traj_screen_x = 0, traj_screen_y = 0;
-	Vector3d global_pos(0.0,0.0,0.0);
-	if(m_pMotion)
-	{
-		Posture posture;
-
-		posture = *m_pMotion->GetPosture(0);
-
-		global_pos.x = posture.root_pos[0];
-		global_pos.y = posture.root_pos[1];
-		global_pos.z = posture.root_pos[2];
-	}
-
-	vector<Vector3d>& traj3D = m_vMotionClip[motion_clip_index[0]]->m_vJointTrajByPos[m_iShowTrajectoryIndex];
-	
-	Vector3d v3d = traj3D[0] - global_pos;
-
-	// obtain the 3D position 
-	GLfloat winX, winY, winZ; 
-	GLdouble posX, posY, posZ; 
-
-	winX = (float)sketch_screen_x; 
-	winY = (float)m_vViewPort[3] - (float)sketch_screen_y;
-	winZ = v3d.getZ();
-
-	gluUnProject(winX, winY, winZ, m_vModelViewMatrix, m_vProjectionMatrix, m_vViewPort, &posX, &posY, &posZ); 
-
-	translation.setX(posX - v3d.getX());
-	translation.setY(posY - v3d.getY());
-	translation.setZ(posZ - v3d.getZ());
-
-	return translation;
-}
-/*
-	select certain joint to show its trajectory
-*/
-void RenderArea::showJointTrajectory(int index)
-{
-	m_iShowTrajectoryIndex = index;
-	
-	styleUsrDrawingImage.fill(qRgba(255,255,255,0));
-
-	update();
 }
