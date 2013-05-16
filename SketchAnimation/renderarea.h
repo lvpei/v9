@@ -158,7 +158,7 @@ private:
 	bool m_bSketchPose;		// true is pose, false is animation
 
 	// the feature for trajectories
-	vector< vector<QPoint> > m_TrajectoryFeature;
+	vector< vector<CvPoint2D32f> > m_TrajectoryFeature;
 	int m_iShowTrajectoryIndex;
 
 	// alignment the user's sketching with character's pose
@@ -195,7 +195,7 @@ private:
 	 /*
 		compute the new candidate animation sets
 	 */
-	 void updateCandidateAnimationSets(const vector<QPoint>& sketch_curve_feature);
+	 void updateCandidateAnimationSets(const vector<CvPoint2D32f>& sketch_curve_feature);
 
 	 /*
 		set up viewport
@@ -269,7 +269,7 @@ private:
 	 /*
 		extract the feature of motion curves presented by 2D image points
 	 */
-	 void extractMotionFeature(const vector<QPoint>&, vector<QPoint>&);
+	 void extractMotionFeature(const vector<QPoint>&, vector<CvPoint2D32f>&);
 
 	 /*
 		compute the translation between certain joint and user's sketching

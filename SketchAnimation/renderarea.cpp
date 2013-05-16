@@ -931,7 +931,7 @@ void RenderArea::mouseReleaseEvent(QMouseEvent * event)
 			}
 			else // The user is sketching animation
 			{
-				vector<QPoint> feature;
+				vector<CvPoint2D32f> feature;
 				extractMotionFeature(m_vPoints,feature);
 
 				// compare the extracted feature with database
@@ -3935,6 +3935,7 @@ void RenderArea::replay()
 
 void RenderArea::test()
 {
+	/*
 	int sz = m_TrajectoryFeature.size();
 
 	int idx = genRandomInt(0,sz);
@@ -3963,6 +3964,7 @@ void RenderArea::test()
 
 		qDebug()<<"The distance between "<<idx<<" trajectory and "<< i << " trajectory is "<<dist<<endl;
 	}
+	//*/
 }
 
 void RenderArea::loadMotionClipsFromFile(char* filename)
@@ -4312,7 +4314,7 @@ void RenderArea::drawSketchingAnimationInterface()
  /*
 	compute the new candidate animation sets
  */
-void RenderArea::updateCandidateAnimationSets(const vector<QPoint>& sketch_curve_feature)
+void RenderArea::updateCandidateAnimationSets(const vector<CvPoint2D32f>& sketch_curve_feature)
 {
 	// compute the distance between features
 	int dim_of_feature = sketch_curve_feature.size();
@@ -4329,13 +4331,13 @@ void RenderArea::updateCandidateAnimationSets(const vector<QPoint>& sketch_curve
 	tmp_image.fill(backColor);
 
 	// for test
-	//QPainter pt(&tmp_image);
-	//pt.setPen(QColor(255,255,0));
+	QPainter pt(&tmp_image);
+	pt.setPen(QColor(255,255,0));
 
 	for(int i = 0; i < m_vMotionClip.size(); i++)
 	{
 		// store the curve feature of motion from database
-		vector<QPoint> db_curve_feature;
+		vector<CvPoint2D32f> db_curve_feature;
 
 		vector<Vector3d>& traj3D = m_vMotionClip[i]->m_vJointTrajByPos[m_iShowTrajectoryIndex];
 		
@@ -4358,8 +4360,8 @@ void RenderArea::updateCandidateAnimationSets(const vector<QPoint>& sketch_curve
 		}
 
 		// for test
-		/*for(int i = 1; i < prj2DArr.size(); i++)
-			pt.drawLine(prj2DArr[i-1],prj2DArr[i]);*/
+		for(int i = 1; i < prj2DArr.size(); i++)
+			pt.drawLine(prj2DArr[i-1],prj2DArr[i]);
 
 		/*
 		QImage tmp_image = QImage(IMAGE_SIZE,IMAGE_SIZE,QImage::Format_ARGB32);  //32bit color with size is 720,720
@@ -4378,12 +4380,12 @@ void RenderArea::updateCandidateAnimationSets(const vector<QPoint>& sketch_curve
 		extractMotionFeature(prj2DArr,db_curve_feature);
 
 		// compare the feature between user's sketching motion curve and that from database
-		QPoint diff_p;
+		CvPoint2D32f diff_p;
 		double dist = 0.0;
 		for(int j = 0; j < dim_of_feature; j++)
 		{
-			diff_p = sketch_curve_feature[j] - db_curve_feature[j];
-			dist += sqrt((double)(diff_p.x() * diff_p.x() + diff_p.y() * diff_p.y()));
+			diff_p = cvPoint2D32f(sketch_curve_feature[j].x - db_curve_feature[j].x, sketch_curve_feature[j].y - db_curve_feature[j].y);
+			dist += sqrt((double)(diff_p.x * diff_p.x + diff_p.y * diff_p.y));
 		}
 
 		if(dist < min_dist)
@@ -4418,7 +4420,7 @@ void RenderArea::updateCandidateAnimationSets(const vector<QPoint>& sketch_curve
 		}
 	}
 
-	//pt.end();
+	pt.end();
 
 	tmp_image.save("prj.png","png");
 
@@ -4429,7 +4431,7 @@ void RenderArea::updateCandidateAnimationSets(const vector<QPoint>& sketch_curve
  /*
 	extract the feature of motion curves presented by 2D image points
  */
-void RenderArea::extractMotionFeature(const vector<QPoint>& m_vPoints, vector<QPoint>& feature)
+void RenderArea::extractMotionFeature(const vector<QPoint>& m_vPoints, vector<CvPoint2D32f>& feature)
 {
 	double x, y, z;
 	std::vector<CAxisAngle> vPos;
@@ -4449,21 +4451,38 @@ void RenderArea::extractMotionFeature(const vector<QPoint>& m_vPoints, vector<QP
 	m_SketchTraj.SetBoundaryCondition(US_BC_I);
 	m_SketchTraj.GenerateIt();
 
-	// resample points
-	vector<QPoint> resamplePoints;
-	int resampleNum = 100;
-	for(int i = 0; i < resampleNum; i++)
-	{
-		CAxisAngle aa = m_SketchTraj.GetDataByTimeA(i * 0.033 * m_vPoints.size() / resampleNum);
-		Vector3d vtmp = aa.GetValue();
+	// re-sample points
+	vector<CvPoint2D32f> resamplePoints;
+	int resampleNum = 20;
 
-		resamplePoints.push_back(QPoint((int)vtmp.getX(),(int)vtmp.getY()));
+	// the length of the motion curve
+	float curve_length = 0.0;
+
+	CAxisAngle aa;
+	Vector3d vtmp;
+
+	// the first point 
+	aa = m_SketchTraj.GetDataByTimeA(0.0);
+	vtmp = aa.GetValue();
+	resamplePoints.push_back(cvPoint2D32f(vtmp.getX(),vtmp.getY()));
+
+	// the other points
+	for(int i = 1; i < resampleNum; i++)
+	{
+		aa = m_SketchTraj.GetDataByTimeA(i * 0.033 * m_vPoints.size() / resampleNum);
+		vtmp = aa.GetValue();
+
+		resamplePoints.push_back(cvPoint2D32f(vtmp.getX(),vtmp.getY()));
+
+		float diff_x = resamplePoints[i].x - resamplePoints[i-1].x;
+		float diff_y = resamplePoints[i].y - resamplePoints[i-1].y;
+		curve_length += sqrt(diff_x * diff_x + diff_y * diff_y);
 	}
 
 	// compute the feature of motion curve
 	for(int i = 0; i < resampleNum; i++)
 	{
-		QPoint f = resamplePoints[i] - resamplePoints[0];
+		CvPoint2D32f f = cvPoint2D32f((resamplePoints[i].x - resamplePoints[0].x)/curve_length, (resamplePoints[i].y - resamplePoints[0].y)/curve_length);
 
 		feature.push_back(f);
 	}
