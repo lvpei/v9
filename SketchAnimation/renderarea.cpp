@@ -60,40 +60,40 @@ char* motion_clip_filename[] = {
 //*/
 
 char* motion_clip_filename[] = {
-	"D:\\Siggraph2013\\v9\\SketchAnimation\\Resources\\walk_from_jianyuan_5_5\\ACTOR2-2.AMC",
-	"D:\\Siggraph2013\\v9\\SketchAnimation\\Resources\\walk_from_jianyuan_5_5\\Actor2.MickeySneakingWalk001_2.AMC",
-	"D:\\Siggraph2013\\v9\\SketchAnimation\\Resources\\walk_from_jianyuan_5_5\\CA232F-1.AMC",
-	"D:\\Siggraph2013\\v9\\SketchAnimation\\Resources\\walk_from_jianyuan_5_5\\CA8240-1.AMC",
-	"D:\\Siggraph2013\\v9\\SketchAnimation\\Resources\\walk_from_jianyuan_5_5\\CA864C-1.AMC",
-	"D:\\Siggraph2013\\v9\\SketchAnimation\\Resources\\walk_from_jianyuan_5_5\\CA8AF0-1.AMC",
-	"D:\\Siggraph2013\\v9\\SketchAnimation\\Resources\\walk_from_jianyuan_5_5\\CA9244-1.AMC",
-	"D:\\Siggraph2013\\v9\\SketchAnimation\\Resources\\walk_from_jianyuan_5_5\\CA924C-1.AMC",
-	"D:\\Siggraph2013\\v9\\SketchAnimation\\Resources\\walk_from_jianyuan_5_5\\CA9648-1.AMC",
-	"D:\\Siggraph2013\\v9\\SketchAnimation\\Resources\\walk_from_jianyuan_5_5\\CA964C-1.AMC",
-	"D:\\Siggraph2013\\v9\\SketchAnimation\\Resources\\walk_from_jianyuan_5_5\\CAA248-1.AMC",
-	"D:\\Siggraph2013\\v9\\SketchAnimation\\Resources\\walk_from_jianyuan_5_5\\CAA24C-1.AMC",
-	"D:\\Siggraph2013\\v9\\SketchAnimation\\Resources\\walk_from_jianyuan_5_5\\CAAA40-1.AMC",
-	"D:\\Siggraph2013\\v9\\SketchAnimation\\Resources\\walk_from_jianyuan_5_5\\CABD41-1.AMC",
-	"D:\\Siggraph2013\\v9\\SketchAnimation\\Resources\\walk_from_jianyuan_5_5\\Capture.male.cmale-direction10_2.AMC",
-	"D:\\Siggraph2013\\v9\\SketchAnimation\\Resources\\walk_from_jianyuan_5_5\\Capture.male.cmale-direction2.AMC",
-	"D:\\Siggraph2013\\v9\\SketchAnimation\\Resources\\walk_from_jianyuan_5_5\\Capture.male.cmale-speed1.AMC",
-	"D:\\Siggraph2013\\v9\\SketchAnimation\\Resources\\walk_from_jianyuan_5_5\\Capture.male.cmale-speed9.AMC",
-	"D:\\Siggraph2013\\v9\\SketchAnimation\\Resources\\walk_from_jianyuan_5_5\\Capture.male.lowhead4.AMC",
-	"D:\\Siggraph2013\\v9\\SketchAnimation\\Resources\\walk_from_jianyuan_5_5\\Capture.male.stepsize1.AMC",
-	"D:\\Siggraph2013\\v9\\SketchAnimation\\Resources\\walk_from_jianyuan_5_5\\Capture.male.style12.AMC",
-	"D:\\Siggraph2013\\v9\\SketchAnimation\\Resources\\walk_from_jianyuan_5_5\\Capture.male.style15.AMC",
-	"D:\\Siggraph2013\\v9\\SketchAnimation\\Resources\\walk_from_jianyuan_5_5\\Capture.male.style17.AMC",
-	"D:\\Siggraph2013\\v9\\SketchAnimation\\Resources\\walk_from_jianyuan_5_5\\Capture.male.style18.AMC",
-	"D:\\Siggraph2013\\v9\\SketchAnimation\\Resources\\walk_from_jianyuan_5_5\\Capture.male.style21.AMC",
-	"D:\\Siggraph2013\\v9\\SketchAnimation\\Resources\\walk_from_jianyuan_5_5\\Capture.male.style24.AMC",
-	"D:\\Siggraph2013\\v9\\SketchAnimation\\Resources\\walk_from_jianyuan_5_5\\Capture.male.style25.AMC",
-	"D:\\Siggraph2013\\v9\\SketchAnimation\\Resources\\walk_from_jianyuan_5_5\\Capture.male.style6.AMC",
-	"D:\\Siggraph2013\\v9\\SketchAnimation\\Resources\\walk_from_jianyuan_5_5\\Capture.male.style_2.AMC",
-	"D:\\Siggraph2013\\v9\\SketchAnimation\\Resources\\walk_from_jianyuan_5_5\\justine2.walk_climbover_004.AMC",
-	"D:\\Siggraph2013\\v9\\SketchAnimation\\Resources\\walk_from_jianyuan_5_5\\justine2.walk_slopes_002.AMC",
-	"D:\\Siggraph2013\\v9\\SketchAnimation\\Resources\\walk_from_jianyuan_5_5\\male.Mope.AMC",
-	"D:\\Siggraph2013\\v9\\SketchAnimation\\Resources\\walk_from_jianyuan_5_5\\male.pick_005.AMC",
-	"D:\\Siggraph2013\\v9\\SketchAnimation\\Resources\\walk_from_jianyuan_5_5\\male.walking-directions.AMC"
+	"Resources\\walk_from_jianyuan_5_5\\ACTOR2-2.AMC",
+	"Resources\\walk_from_jianyuan_5_5\\Actor2.MickeySneakingWalk001_2.AMC",
+	"Resources\\walk_from_jianyuan_5_5\\CA232F-1.AMC",
+	"Resources\\walk_from_jianyuan_5_5\\CA8240-1.AMC",
+	"Resources\\walk_from_jianyuan_5_5\\CA864C-1.AMC",
+	"Resources\\walk_from_jianyuan_5_5\\CA8AF0-1.AMC",
+	"Resources\\walk_from_jianyuan_5_5\\CA9244-1.AMC",
+	"Resources\\walk_from_jianyuan_5_5\\CA924C-1.AMC",
+	"Resources\\walk_from_jianyuan_5_5\\CA9648-1.AMC",
+	"Resources\\walk_from_jianyuan_5_5\\CA964C-1.AMC",
+	"Resources\\walk_from_jianyuan_5_5\\CAA248-1.AMC",
+	"Resources\\walk_from_jianyuan_5_5\\CAA24C-1.AMC",
+	"Resources\\walk_from_jianyuan_5_5\\CAAA40-1.AMC",
+	"Resources\\walk_from_jianyuan_5_5\\CABD41-1.AMC",
+	"Resources\\walk_from_jianyuan_5_5\\Capture.male.cmale-direction10_2.AMC",
+	"Resources\\walk_from_jianyuan_5_5\\Capture.male.cmale-direction2.AMC",
+	"Resources\\walk_from_jianyuan_5_5\\Capture.male.cmale-speed1.AMC",
+	"Resources\\walk_from_jianyuan_5_5\\Capture.male.cmale-speed9.AMC",
+	"Resources\\walk_from_jianyuan_5_5\\Capture.male.lowhead4.AMC",
+	"Resources\\walk_from_jianyuan_5_5\\Capture.male.stepsize1.AMC",
+	"Resources\\walk_from_jianyuan_5_5\\Capture.male.style12.AMC",
+	"Resources\\walk_from_jianyuan_5_5\\Capture.male.style15.AMC",
+	"Resources\\walk_from_jianyuan_5_5\\Capture.male.style17.AMC",
+	"Resources\\walk_from_jianyuan_5_5\\Capture.male.style18.AMC",
+	"Resources\\walk_from_jianyuan_5_5\\Capture.male.style21.AMC",
+	"Resources\\walk_from_jianyuan_5_5\\Capture.male.style24.AMC",
+	"Resources\\walk_from_jianyuan_5_5\\Capture.male.style25.AMC",
+	"Resources\\walk_from_jianyuan_5_5\\Capture.male.style6.AMC",
+	"Resources\\walk_from_jianyuan_5_5\\Capture.male.style_2.AMC",
+	"Resources\\walk_from_jianyuan_5_5\\justine2.walk_climbover_004.AMC",
+	"Resources\\walk_from_jianyuan_5_5\\justine2.walk_slopes_002.AMC",
+	"Resources\\walk_from_jianyuan_5_5\\male.Mope.AMC",
+	"Resources\\walk_from_jianyuan_5_5\\male.pick_005.AMC",
+	"Resources\\walk_from_jianyuan_5_5\\male.walking-directions.AMC"
 };
 //*/
 
@@ -382,6 +382,7 @@ void RenderArea::paintEvent(QPaintEvent * /* event */)
 			painter.setCompositionMode(QPainter::CompositionMode_SourceOver);	
 			// background
 			painter.drawImage(m_Translation.x(),m_Translation.y(),threedpose);	// candidate 3D poses
+			//painter.drawImage(0,0,threedpose);	// candidate 3D poses
 		}
 
 		if(m_bShowSketch)
@@ -1580,7 +1581,7 @@ void RenderArea::initializeGL()
 
 	// load the skeleton structure
 	//m_pSkeleton = new Skeleton(".\\Resources\\boxing_13.asf",SKELETON_SCALE);
-	m_pSkeleton = new Skeleton("D:\\Siggraph2013\\v9\\SketchAnimation\\Resources\\walk_from_jianyuan_5_5\\jianyuan.asf",SKELETON_SCALE);
+	m_pSkeleton = new Skeleton("Resources\\walk_from_jianyuan_5_5\\jianyuan.asf",SKELETON_SCALE);
 	
 	if(!m_pSkeleton->isLoaded())
 		qDebug()<<"skeleton is not loaded";
@@ -4326,8 +4327,8 @@ void RenderArea::updateCandidateAnimationSets(const vector<CvPoint2D32f>& sketch
 	motion_clip_index.clear();
 	motion_clip_index.resize(m_vMotionClip.size());
 
-	QImage tmp_image = QImage(IMAGE_SIZE,IMAGE_SIZE,QImage::Format_ARGB32);  //32bit color with size is 720,720
-	backColor = qRgba(0,0,0,255);				//initial background color is white, transparent
+	QImage tmp_image = QImage(IMAGE_SIZE,IMAGE_SIZE,QImage::Format_ARGB32);		//32bit color with size is 720,720
+	backColor = qRgba(0,0,0,255);												//initial background color is white, transparent
 	tmp_image.fill(backColor);
 
 	// for test
@@ -4453,7 +4454,7 @@ void RenderArea::extractMotionFeature(const vector<QPoint>& m_vPoints, vector<Cv
 
 	// re-sample points
 	vector<CvPoint2D32f> resamplePoints;
-	int resampleNum = 20;
+	int resampleNum = 100;
 
 	// the length of the motion curve
 	float curve_length = 0.0;
