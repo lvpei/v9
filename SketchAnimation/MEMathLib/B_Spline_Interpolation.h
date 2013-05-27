@@ -15,7 +15,6 @@ using namespace std;
 namespace MathLib
 {
 
-
 const int B_SPLINE_ORDER = 3;	// 三次B样条插值
 const int MAX_POINT_NUM = 50;	// 两个关键帧之间数据帧的数量，此处规定最大为50。可根据需要修改
 const double DOUBLE_ZERO = 0.000;
@@ -32,7 +31,7 @@ public:
 	gsl_matrix *x;
 	double *knot;					// Knot vector
 	double *parameter;				// parameter
-	double **N;						// N(n+1)(n+1)
+	double **N;						// N(n+1)(n+1), basis function
 	double **D;						// D(n+1)(3)
 	double **P;						// P(n+1)(3)
 

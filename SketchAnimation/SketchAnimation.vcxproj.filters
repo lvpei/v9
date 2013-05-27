@@ -111,6 +111,9 @@
     <ClCompile Include="MEMotionClip.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="curve_feature.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BVH.h" />
@@ -207,6 +210,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="MEMotionClip.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="curve_feature.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

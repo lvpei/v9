@@ -2,6 +2,10 @@
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SketchAnimation", "SketchAnimation\SketchAnimation.vcxproj", "{35E38CD3-A2AB-4C72-8B7F-9A818AE5115E}"
+	ProjectSection(ProjectDependencies) = postProject
+		{8EE04342-9A5A-4D81-8D56-D5D7571A1341} = {8EE04342-9A5A-4D81-8D56-D5D7571A1341}
+		{0E3081B7-60C1-4F69-98F9-7C31BAB9C69E} = {0E3081B7-60C1-4F69-98F9-7C31BAB9C69E}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MEMathLib", "SketchAnimation\MEMathLib\MEMathLib.vcxproj", "{8EE04342-9A5A-4D81-8D56-D5D7571A1341}"
 EndProject

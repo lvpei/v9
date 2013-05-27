@@ -20,9 +20,9 @@ namespace MathLib
 
 enum USBC   // boundary conditions
 {
-	US_BC_I = 1,  // boundary condition I
-	US_BC_NATURE,    // natural boundary condition with p''(0) = 0;
-	US_BC_PERIODIC  // periodic boundary condition
+	US_BC_I = 1,		// boundary condition I
+	US_BC_NATURE,		// natural boundary condition with p''(0) = 0;
+	US_BC_PERIODIC		// periodic boundary condition
 };
 
 

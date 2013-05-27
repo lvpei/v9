@@ -21,6 +21,7 @@
 #include <QString>
 #include <iostream>
 #include "MEMotionClip.h"
+#include "curve_feature.h"
 
 using namespace std;
 
@@ -883,8 +884,8 @@ void RenderArea::mouseReleaseEvent(QMouseEvent * event)
 	{
 		if(event->button() == Qt::LeftButton)
 		{
-			point = event->pos();
-			m_vPoints.push_back(point);
+			//point = event->pos();
+			//m_vPoints.push_back(point);
 			
 			// record elapsed time for each sketch
 			m_vElapsedTimeForEachSketch.push_back(m_TimerSketch.elapsed());
@@ -932,8 +933,38 @@ void RenderArea::mouseReleaseEvent(QMouseEvent * event)
 			}
 			else // The user is sketching animation
 			{
+				// PG2012 method 
+				/*
 				vector<CvPoint2D32f> feature;
 				extractMotionFeature(m_vPoints,feature);
+				
+				// compare the extracted feature with database
+				m_TrajectoryFeature[m_iShowTrajectoryIndex].assign(feature.begin(),feature.end());
+
+				// update candidate motion clips
+				updateCandidateAnimationSets(m_TrajectoryFeature[m_iShowTrajectoryIndex]);
+
+				m_Translation = computeTranslationBetweenJointAndSketching();
+				//*/
+
+				// curve matching method
+				double* data_x = new double[m_vPoints.size()];
+				double* data_y = new double[m_vPoints.size()];
+				double* feature1D = new double[20];
+
+				for(int i = 0; i < m_vPoints.size(); i++)
+				{
+					data_x[i] = m_vPoints[i].x();
+					data_y[i] = m_vPoints[i].y();
+				}
+
+				double sketch_curve_length = extractCurveFeature(data_x,data_y,m_vPoints.size(),20,feature1D,1.0);
+				
+				vector<CvPoint2D32f> feature;
+				for(int i = 0; i < 20; i++)
+					feature.push_back(cvPoint2D32f(feature1D[i],0.0));
+
+				feature[0].y = sketch_curve_length;
 
 				// compare the extracted feature with database
 				m_TrajectoryFeature[m_iShowTrajectoryIndex].assign(feature.begin(),feature.end());
@@ -942,6 +973,12 @@ void RenderArea::mouseReleaseEvent(QMouseEvent * event)
 				updateCandidateAnimationSets(m_TrajectoryFeature[m_iShowTrajectoryIndex]);
 
 				m_Translation = computeTranslationBetweenJointAndSketching();
+
+
+				delete data_x;
+				delete data_y;
+
+				delete feature1D;
 			}
 		}
 	}
@@ -4317,6 +4354,16 @@ void RenderArea::drawSketchingAnimationInterface()
  */
 void RenderArea::updateCandidateAnimationSets(const vector<CvPoint2D32f>& sketch_curve_feature)
 {
+	Vector3d global_pos(0.0,0.0,0.0);
+	if(m_pMotion)
+	{
+		Posture posture;
+
+		posture = *m_pMotion->GetPosture(0);
+
+		global_pos = posture.root_pos;
+	}
+
 	// compute the distance between features
 	int dim_of_feature = sketch_curve_feature.size();
 	double min_dist = DBL_MAX;
@@ -4335,6 +4382,9 @@ void RenderArea::updateCandidateAnimationSets(const vector<CvPoint2D32f>& sketch
 	QPainter pt(&tmp_image);
 	pt.setPen(QColor(255,255,0));
 
+	ofstream out_x("torso_path_x.txt");
+	ofstream out_y("torso_path_y.txt");
+
 	for(int i = 0; i < m_vMotionClip.size(); i++)
 	{
 		// store the curve feature of motion from database
@@ -4351,18 +4401,23 @@ void RenderArea::updateCandidateAnimationSets(const vector<CvPoint2D32f>& sketch
 		// project these 3D points to 2D
 		for(int j = 0; j < traj3D.size(); j++)
 		{
-			vtmp = traj3D[j];
+			vtmp = traj3D[j] - global_pos;
 			gluProject(vtmp.x,vtmp.y,vtmp.z,m_vModelViewMatrix,m_vProjectionMatrix,m_vViewPort,&win[0],&win[1],&win[2]);
 
 			point2D.setX(win[0]);
 			point2D.setY(m_vViewPort[3] -  win[1]);
 			
 			prj2DArr.push_back(point2D);
+
+			out_x<< point2D.x()<<" ";
+			out_y<< point2D.y()<<" ";
 		}
+		out_x<<"\n";
+		out_y<<"\n";
 
 		// for test
-		for(int i = 1; i < prj2DArr.size(); i++)
-			pt.drawLine(prj2DArr[i-1],prj2DArr[i]);
+		for(int j = 1; j < prj2DArr.size(); j++)
+			pt.drawLine(prj2DArr[j-1],prj2DArr[j]);
 
 		/*
 		QImage tmp_image = QImage(IMAGE_SIZE,IMAGE_SIZE,QImage::Format_ARGB32);  //32bit color with size is 720,720
@@ -4378,7 +4433,29 @@ void RenderArea::updateCandidateAnimationSets(const vector<CvPoint2D32f>& sketch
 		tmp_image.save("prj.png","png");
 		//*/
 
-		extractMotionFeature(prj2DArr,db_curve_feature);
+		// PG2012 method 
+		//extractMotionFeature(prj2DArr,db_curve_feature);
+
+		// curve matching method
+		double* data_x = new double[prj2DArr.size()];
+		double* data_y = new double[prj2DArr.size()];
+		double* feature1D = new double[20];
+
+		for(int j = 0; j < prj2DArr.size(); j++)
+		{
+			data_x[j] = prj2DArr[j].x();
+			data_y[j] = prj2DArr[j].y();
+		}
+
+		extractCurveFeature(data_x,data_y,prj2DArr.size(),20,feature1D,sketch_curve_feature[0].y);
+
+		for(int j = 0; j < 20; j++)
+			db_curve_feature.push_back(cvPoint2D32f(feature1D[j],0.0));
+
+		delete data_x;
+		delete data_y;
+
+		delete feature1D;
 
 		// compare the feature between user's sketching motion curve and that from database
 		CvPoint2D32f diff_p;
@@ -4481,7 +4558,7 @@ void RenderArea::extractMotionFeature(const vector<QPoint>& m_vPoints, vector<Cv
 	}
 
 	// compute the feature of motion curve
-	for(int i = 0; i < resampleNum; i++)
+	for(int i = 1; i < resampleNum; i++)
 	{
 		CvPoint2D32f f = cvPoint2D32f((resamplePoints[i].x - resamplePoints[0].x)/curve_length, (resamplePoints[i].y - resamplePoints[0].y)/curve_length);
 
