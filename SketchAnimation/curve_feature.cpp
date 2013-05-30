@@ -11,18 +11,18 @@ void computeParameters(const double* data_x, const double* data_y, double* param
 	double L_k[MAX_POINT_NUM];
 	L_k[0] = 0;
 	int i;
-	for (i = 1; i <= param_num; i++)
+	for (i = 1; i < param_num; i++)
 	{
 		L_k[i] = L_k[i-1] + sqrt((data_x[i] - data_x[i-1]) * (data_x[i] - data_x[i-1]) + (data_y[i] - data_y[i-1]) * (data_y[i] - data_y[i-1]));
 	}
-	L = L_k[param_num];
-	parameters[0] = 0;
+	L = L_k[param_num - 1];
 	
-	for (i = 1; i < param_num; i++)
+	parameters[0] = 0;
+	for (i = 1; i < param_num - 1; i++)
 	{
 		parameters[i] = L_k[i]/L;
 	}
-	parameters[param_num] = 1.0;
+	parameters[param_num - 1] = 1.0;
 }
 
 // construct the B-Spline curve
@@ -111,7 +111,7 @@ double extractCurveFeature(double* x, double* y, int point_num, int feature_num,
 	gsp->params = new double[param_num];
 
 	// compute the parameters
-	computeParameters(x,y,gsp->params,param_num - 1);
+	computeParameters(x,y,gsp->params,param_num);
 	
 	// construct the spline curve
 	constructBSpline(gsp,x,y,param_num);
@@ -167,7 +167,7 @@ double extractCurveFeature(double* x, double* y, int point_num, int feature_num,
 				acc_length += r;
 		} 
 
-		bisectionSearch(gf, acc_length - r, find_length, start,end, new_params + j);
+		bisectionSearch(gf, acc_length - r, find_length, start, end, new_params + j);
 	}
 	
 	printf("new params:\n");
@@ -191,8 +191,8 @@ double extractCurveFeature(double* x, double* y, int point_num, int feature_num,
 	printf("\n");
 
 	// construct new spline curve by arc-length parameter
+	gsp->clear();
 	gsp->param_num = m;
-	delete gsp->params;
 	gsp->params = new double[gsp->param_num];
 
 	for(int i = 0; i < m; i++)
@@ -203,9 +203,9 @@ double extractCurveFeature(double* x, double* y, int point_num, int feature_num,
 	printf("new sampling data points:\n");
 	ofstream out_x("x.txt");
 	ofstream out_y("y.txt");
-	for(int i = 0; i < 20; i++)
+	for(int i = 0; i < m - 1; i++)
 	{
-		double param = i * length / 19;
+		double param = i * length / (m - 1);
 		double new_x = gsl_spline_eval(gsp->spline_x,param,gsp->acc);
 		double new_y = gsl_spline_eval(gsp->spline_y,param,gsp->acc);
 
@@ -222,19 +222,12 @@ double extractCurveFeature(double* x, double* y, int point_num, int feature_num,
 	/************************************************************************/
 	m = 40;
 
-	double* curvature = new double[m];
+	double* curvature = new double[m];	
 	
-	gsp->param_num = m;
-	delete gsp->params;
-	gsp->params = new double[gsp->param_num];
-
-	for(int i = 0; i < m; i++)
-		gsp->params[i] = i * length / (m - 1);
-
 	printf("compute curvature of arc-length based spline curve:\n");
-	for(int i = 0; i < m; i++)
+	for(int i = 0; i < m - 1; i++)
 	{
-		double param = gsp->params[i];
+		double param = i * length / (m - 1);
 		
 		double new_dx = gsl_spline_eval_deriv(gsp->spline_x,param,gsp->acc);
 		double new_dx2 = gsl_spline_eval_deriv2(gsp->spline_x,param,gsp->acc);
@@ -250,12 +243,18 @@ double extractCurveFeature(double* x, double* y, int point_num, int feature_num,
 	}
 	printf("\n");
 
+	gsp->clear();
+	gsp->param_num = m - 1;
+	gsp->params = new double[gsp->param_num];
+	for(int i = 0; i < m - 1; i++)
+		gsp->params[i] = i * length / (m - 1);
+
 	constructBSpline(gsp,curvature,NULL,gsp->param_num);
 
 	printf("new sampling data points from curvature curve:\n");
 	ofstream out_curvature("curvature.txt");
 	ofstream out_params("params.txt");
-	for(int i = 0; i < m; i++)
+	for(int i = 0; i < m - 1; i++)
 	{
 		double kappa = gsl_spline_eval(gsp->spline_x,gsp->params[i],gsp->acc);
 
@@ -267,7 +266,7 @@ double extractCurveFeature(double* x, double* y, int point_num, int feature_num,
 
 	/************************************************************************/
 	/* Integrate the unsigned curvatures along the curve by summing the 
-	   absolute values of curvatures discretely sampled along the curve                                                                     */
+	   absolute values of curvatures discretely sampled along the curve
 	/************************************************************************/
 	gsl_function gf2;
 	gf2.function = fx2;
@@ -282,7 +281,7 @@ double extractCurveFeature(double* x, double* y, int point_num, int feature_num,
 		end = gsp->params[i];
 
 		//gsl_integration_qng(&gf2,start,end,0.0005,0.0005,&r,&er,&n);
-		gsl_integration_qng(&gf2,start,end,0.002,0.002,&r,&er,&n);
+		gsl_integration_qng(&gf2,start,end,0.05,0.05,&r,&er,&n);
 
 		length += r;
 		integ[i] = length;
@@ -301,6 +300,12 @@ double extractCurveFeature(double* x, double* y, int point_num, int feature_num,
 	   the integral of unsigned curvature axis. (signed curvature w.r.t the 
 	   integral of unsigned curvature)	
 	/************************************************************************/
+	gsp->clear();
+	gsp->param_num = m;
+	gsp->params = new double[gsp->param_num];
+	for(int i = 0; i < m; i++)
+		gsp->params[i] = i * length / (m - 1);
+
 	constructBSpline(gsp,integ,NULL,gsp->param_num);
 
 	printf("compute curvature of the integral of unsigned curvature:\n");
@@ -321,6 +326,12 @@ double extractCurveFeature(double* x, double* y, int point_num, int feature_num,
 	}
 	printf("\n");
 
+	gsp->clear();
+	gsp->param_num = m;
+	gsp->params = new double[gsp->param_num];
+	for(int i = 0; i < m; i++)
+		gsp->params[i] = i * length / (m - 1);
+
 	constructBSpline(gsp,curvature,NULL,gsp->param_num);
 
 	printf("new sampling data points from the integral of unsigned curvature:\n");
@@ -339,20 +350,24 @@ double extractCurveFeature(double* x, double* y, int point_num, int feature_num,
 
 	// extract the curve feature
 	double curve_length = gsp->params[m-1];
-	double sub_curve_length = curve_length / (feature_num - 1);
+	double sub_curve_length = 0.0;
 
-	double scale = 1.0;
-	if(abs(base_length - 1.0) > 0.00001)
-		scale = curve_length / base_length;
+	//if(abs(base_length - 1.0) > 0.00001)
+	//	sub_curve_length = (base_length / (feature_num - 1)) * (curve_length / base_length);
+	//else
+		sub_curve_length = curve_length / (feature_num - 1);
 
-	for(int i = 0; i < feature_num; i++)
+	printf("invariant curve feature:\n");
+	for(int i = 0; i < feature_num - 1; i++)
 	{
-		double t = i * sub_curve_length * scale;
+		double t = i * sub_curve_length;
 
 		double kappa = gsl_spline_eval(gsp->spline_x,t,gsp->acc);
 
 		feature[i] = kappa;
+		printf("%g ",feature[i]);
 	}
+	printf("\n");
 
 	delete integ;
 	delete curvature;

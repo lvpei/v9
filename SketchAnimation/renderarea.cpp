@@ -961,7 +961,7 @@ void RenderArea::mouseReleaseEvent(QMouseEvent * event)
 				double sketch_curve_length = extractCurveFeature(data_x,data_y,m_vPoints.size(),20,feature1D,1.0);
 				
 				vector<CvPoint2D32f> feature;
-				for(int i = 0; i < 20; i++)
+				for(int i = 0; i < 20 - 1; i++)
 					feature.push_back(cvPoint2D32f(feature1D[i],0.0));
 
 				feature[0].y = sketch_curve_length;
@@ -4449,7 +4449,7 @@ void RenderArea::updateCandidateAnimationSets(const vector<CvPoint2D32f>& sketch
 
 		extractCurveFeature(data_x,data_y,prj2DArr.size(),20,feature1D,sketch_curve_feature[0].y);
 
-		for(int j = 0; j < 20; j++)
+		for(int j = 0; j < 20 - 1; j++)
 			db_curve_feature.push_back(cvPoint2D32f(feature1D[j],0.0));
 
 		delete data_x;

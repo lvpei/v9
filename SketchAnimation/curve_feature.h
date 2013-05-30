@@ -33,10 +33,26 @@ typedef struct _gsl_spline_pointer_{
 	}
 	~_gsl_spline_pointer_()
 	{
+		clear();
+	}
+	void clear()
+	{
+		param_num = 0;
 		delete params;
-		gsl_spline_free (spline_x);
-		gsl_spline_free (spline_y);
+		params = NULL;
+
+		if(spline_x)
+		{
+			gsl_spline_free (spline_x);
+			spline_x = NULL;
+		}
+		if(spline_y)
+		{
+			gsl_spline_free (spline_y);
+			spline_y = NULL;
+		}
 		gsl_interp_accel_free (acc);
+		acc = NULL;
 	}
 }gsl_spline_pointer;
 
