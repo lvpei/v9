@@ -351,13 +351,19 @@ double extractCurveFeature(double* x, double* y, int point_num, int feature_num,
 	// extract the curve feature
 	double curve_length = gsp->params[m-1];
 	double sub_curve_length = 0.0;
-
-	//if(abs(base_length - 1.0) > 0.00001)
-	//	sub_curve_length = (base_length / (feature_num - 1)) * (curve_length / base_length);
-	//else
+	int seg_num = 0;
+	if(abs(base_length - 1.0) > 0.00001)
+	{
+		sub_curve_length = base_length / (feature_num - 1);
+		seg_num = int(curve_length / sub_curve_length);
+	}
+	else
+	{	
 		sub_curve_length = curve_length / (feature_num - 1);
+	}
 
 	printf("invariant curve feature:\n");
+	
 	for(int i = 0; i < feature_num - 1; i++)
 	{
 		double t = i * sub_curve_length;
