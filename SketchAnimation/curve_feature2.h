@@ -73,7 +73,7 @@ void bisectionSearch(const gsl_function& gf, double low_length, double length, d
 void computeNewPointsByArcParameters(const gsl_spline_pointer* gsp, int param_num, const double* params, double* data_x, double* data_y);
 
 // extract fixed number of feature points from curve
-void extractCurveFeature(double* x, double* y, int point_num, int feature_num, double*& feature);
+double extractCurveFeature(double* x, double* y, int point_num, int feature_num, double* feature, int* actual_feature_num, double base_length = 1.0);
 
 // compare two feature
 double compareCurveFeature(int feature_num, double* feature1, double* feature2);

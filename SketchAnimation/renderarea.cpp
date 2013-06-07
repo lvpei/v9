@@ -339,7 +339,8 @@ void RenderArea::paintEvent(QPaintEvent * /* event */)
 			glLoadIdentity();
 
 			// projection matrix
-			gluPickMatrix(m_iPickX - m_Translation.x(),viewport[3] - m_iPickY + m_Translation.y(),4,4,viewport);
+			//gluPickMatrix(m_iPickX - m_Translation.x(),viewport[3] - m_iPickY + m_Translation.y(),4,4,viewport);
+			gluPickMatrix(m_iPickX,viewport[3] - m_iPickY,4,4,viewport);
 			glMultMatrixd(m_vProjectionMatrix);
 
 			glMatrixMode(GL_MODELVIEW);
@@ -382,8 +383,8 @@ void RenderArea::paintEvent(QPaintEvent * /* event */)
 		{
 			painter.setCompositionMode(QPainter::CompositionMode_SourceOver);	
 			// background
-			painter.drawImage(m_Translation.x(),m_Translation.y(),threedpose);	// candidate 3D poses
-			//painter.drawImage(0,0,threedpose);	// candidate 3D poses
+			//painter.drawImage(m_Translation.x(),m_Translation.y(),threedpose);	// candidate 3D poses
+			painter.drawImage(0,0,threedpose);	// candidate 3D poses
 		}
 
 		if(m_bShowSketch)
@@ -950,21 +951,38 @@ void RenderArea::mouseReleaseEvent(QMouseEvent * event)
 				// curve matching method
 				double* data_x = new double[m_vPoints.size()];
 				double* data_y = new double[m_vPoints.size()];
-				double* feature1D = new double[20];
+				//double* feature1D = new double[10];
+				double* feature1D;
 
+				// for debug
+				ofstream out_x("user_sketch_point_x.txt");
+				ofstream out_y("user_sketch_point_y.txt");
 				for(int i = 0; i < m_vPoints.size(); i++)
 				{
 					data_x[i] = m_vPoints[i].x();
 					data_y[i] = m_vPoints[i].y();
+
+					out_x<< m_vPoints[i].x()<<",";
+					out_y<< m_vPoints[i].y()<<",";
 				}
 
-				double sketch_curve_length = extractCurveFeature(data_x,data_y,m_vPoints.size(),20,feature1D,1.0);
+				printf("dealing with user's sketching curve\n");
 				
+				/*
+				int skech_seg_num = 0;
+				double sketch_curve_length = extractCurveFeature(data_x,data_y,m_vPoints.size(),10,feature1D,&skech_seg_num,1.0);
+
 				vector<CvPoint2D32f> feature;
-				for(int i = 0; i < 20 - 1; i++)
+				for(int i = 0; i < skech_seg_num - 1; i++)
 					feature.push_back(cvPoint2D32f(feature1D[i],0.0));
 
 				feature[0].y = sketch_curve_length;
+				//*/
+
+				extractCurveFeature(data_x,data_y,m_vPoints.size(),20,feature1D);
+				vector<CvPoint2D32f> feature;
+				for(int i = 0; i < (20 - 1) * 3; i++)
+					feature.push_back(cvPoint2D32f(feature1D[i],0.0));
 
 				// compare the extracted feature with database
 				m_TrajectoryFeature[m_iShowTrajectoryIndex].assign(feature.begin(),feature.end());
@@ -4311,7 +4329,7 @@ void RenderArea::drawSketchingAnimationInterface()
 	//glTranslatef(-global_pos.x , -global_pos.y ,-global_pos.z );
 
 	// show the joint trajectory
-	for(int clip_idx = 0; clip_idx < motion_clip_num; clip_idx++)
+	for(int clip_idx = 0; clip_idx < /*motion_clip_num*/5; clip_idx++)
 	{
 		int idx = motion_clip_index[clip_idx];
 		vector<Vector3d>& vPos = m_vMotionClip[idx]->m_vJointTrajByPos[m_iShowTrajectoryIndex];
@@ -4365,8 +4383,8 @@ void RenderArea::updateCandidateAnimationSets(const vector<CvPoint2D32f>& sketch
 	}
 
 	// compute the distance between features
-	int dim_of_feature = sketch_curve_feature.size();
-	double min_dist = DBL_MAX;
+	double max_correlation = -1.0;
+	double min_distance = DBL_MAX;
 	int cloest_motion_clip = 0;
 	vector<double> dist_sort_arr;
 	dist_sort_arr.assign(m_vMotionClip.size(),DBL_MAX);
@@ -4380,13 +4398,25 @@ void RenderArea::updateCandidateAnimationSets(const vector<CvPoint2D32f>& sketch
 
 	// for test
 	QPainter pt(&tmp_image);
-	pt.setPen(QColor(255,255,0));
 
-	ofstream out_x("torso_path_x.txt");
-	ofstream out_y("torso_path_y.txt");
+	pt.setPen(QColor(0,255,255));
+	for(int i = 1; i < m_vPoints.size(); i++)
+		pt.drawLine(m_vPoints[i-1],m_vPoints[i]);
 
-	for(int i = 0; i < m_vMotionClip.size(); i++)
+	pt.setPen(QColor(255,0,0));
+
+	ofstream out_x;
+	ofstream out_y;
+
+	char filename_x[50];
+	char filename_y[50];
+	for(int i = 0; i < /*m_vMotionClip.size()*/5; i++)
 	{
+		sprintf(filename_x,"%d_x.txt",i);
+		sprintf(filename_y,"%d_y.txt",i);
+		out_x.open(filename_x);
+		out_y.open(filename_y);
+
 		// store the curve feature of motion from database
 		vector<CvPoint2D32f> db_curve_feature;
 
@@ -4407,10 +4437,24 @@ void RenderArea::updateCandidateAnimationSets(const vector<CvPoint2D32f>& sketch
 			point2D.setX(win[0]);
 			point2D.setY(m_vViewPort[3] -  win[1]);
 			
-			prj2DArr.push_back(point2D);
+			if(prj2DArr.size() != 0)
+			{
+				QPoint tmp = prj2DArr[prj2DArr.size() - 1];
 
-			out_x<< point2D.x()<<" ";
-			out_y<< point2D.y()<<" ";
+				if(tmp.x() != point2D.x() || tmp.y() != point2D.y())
+				{	
+					prj2DArr.push_back(point2D);
+					out_x<< point2D.x()<<",";
+					out_y<< point2D.y()<<",";
+				}
+			}
+			else
+			{
+				prj2DArr.push_back(point2D);
+				out_x<< point2D.x()<<",";
+				out_y<< point2D.y()<<",";
+			}
+
 		}
 		out_x<<"\n";
 		out_y<<"\n";
@@ -4439,17 +4483,28 @@ void RenderArea::updateCandidateAnimationSets(const vector<CvPoint2D32f>& sketch
 		// curve matching method
 		double* data_x = new double[prj2DArr.size()];
 		double* data_y = new double[prj2DArr.size()];
-		double* feature1D = new double[20];
-
+		//double* feature1D = new double[10];
+		double* feature1D;
+		
 		for(int j = 0; j < prj2DArr.size(); j++)
 		{
 			data_x[j] = prj2DArr[j].x();
 			data_y[j] = prj2DArr[j].y();
 		}
 
-		extractCurveFeature(data_x,data_y,prj2DArr.size(),20,feature1D,sketch_curve_feature[0].y);
+		printf("dealing with the %d-th db curve\n",i);
+		
+		/*
+		int actual_seg_num = 0;
+		extractCurveFeature(data_x,data_y,prj2DArr.size(),10,feature1D,&actual_seg_num,sketch_curve_feature[0].y);
 
-		for(int j = 0; j < 20 - 1; j++)
+		actual_seg_num -= 1;
+		for(int j = 0; j < actual_seg_num; j++)
+			db_curve_feature.push_back(cvPoint2D32f(feature1D[j],0.0));
+		//*/
+
+		extractCurveFeature(data_x,data_y,prj2DArr.size(),20,feature1D);
+		for(int j = 0; j < (20 - 1) * 3; j++)
 			db_curve_feature.push_back(cvPoint2D32f(feature1D[j],0.0));
 
 		delete data_x;
@@ -4460,15 +4515,52 @@ void RenderArea::updateCandidateAnimationSets(const vector<CvPoint2D32f>& sketch
 		// compare the feature between user's sketching motion curve and that from database
 		CvPoint2D32f diff_p;
 		double dist = 0.0;
-		for(int j = 0; j < dim_of_feature; j++)
+		for(int j = 0; j < db_curve_feature.size(); j++)
 		{
 			diff_p = cvPoint2D32f(sketch_curve_feature[j].x - db_curve_feature[j].x, sketch_curve_feature[j].y - db_curve_feature[j].y);
 			dist += sqrt((double)(diff_p.x * diff_p.x + diff_p.y * diff_p.y));
 		}
+		//*/
+		
+		/*
+		if(actual_seg_num > sketch_curve_feature.size())
+			actual_seg_num = sketch_curve_feature.size();
 
-		if(dist < min_dist)
+		// using cross correlation to compare the feature between user's sketching motion curve and that from database
+		double dist = 0.0;
+		float mean_sketch = 0.0, mean_db = 0.0;
+		for(int j = 0; j < actual_seg_num; j++)
 		{
-			min_dist = dist;
+			mean_sketch += sketch_curve_feature[j].x;
+			mean_db += db_curve_feature[j].x;
+		}
+		mean_sketch = mean_sketch / actual_seg_num;
+		mean_db = mean_db / actual_seg_num;
+
+		double value1 = 0.0, value2 = 0.0, value3 = 0.0;
+		for(int j = 0; j < actual_seg_num; j++)
+		{
+			value1 += (sketch_curve_feature[j].x - mean_sketch) * (db_curve_feature[j].x - mean_db);
+
+			value2 += (sketch_curve_feature[j].x - mean_sketch) * (sketch_curve_feature[j].x - mean_sketch);
+
+			value3 += (db_curve_feature[j].x - mean_db) * (db_curve_feature[j].x - mean_db);
+		}
+
+		dist = value1 / sqrt(value2 * value3);
+		//*/
+
+		/*
+		if(dist > max_correlation)
+		{
+			max_correlation = dist;
+			cloest_motion_clip = i;
+		}
+		//*/
+
+		if(dist < min_distance)
+		{
+			min_distance = dist;
 			cloest_motion_clip = i;
 		}
 		qDebug()<<"The distance between the user's sketched trajectory and "<< i << " trajectory is "<<dist<<endl;
@@ -4496,6 +4588,9 @@ void RenderArea::updateCandidateAnimationSets(const vector<CvPoint2D32f>& sketch
 			dist_sort_arr[i] = dist;
 			motion_clip_index[i] = i;
 		}
+
+		out_x.close();
+		out_y.close();
 	}
 
 	pt.end();
@@ -4503,6 +4598,8 @@ void RenderArea::updateCandidateAnimationSets(const vector<CvPoint2D32f>& sketch
 	tmp_image.save("prj.png","png");
 
 	qDebug()<<"The closest motion clip is "<< cloest_motion_clip<<endl;
+	qDebug()<<"The distance between the user's sketched trajectory and "<< cloest_motion_clip << " trajectory is "<< min_distance<<endl;
+
 	loadMocapData(motion_clip_filename[cloest_motion_clip],"amc");
 }
 
