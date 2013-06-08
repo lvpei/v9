@@ -55,32 +55,6 @@ double fx(double t, void* param)
 	return sqrt(xd * xd + yd * yd);
 }
 
-double fx2(double t, void* param)
-{
-	double kappa = 0.0;
-
-	gsl_spline_pointer* gsp = (gsl_spline_pointer*)param;
-
-	kappa = gsl_spline_eval(gsp->spline_x, t, gsp->acc);
-
-	return abs(kappa);
-}
-
-double fx3(double t, void* param)
-{
-	gsl_spline_pointer* gsp = (gsl_spline_pointer*)param;
-
-	double new_dx = gsl_spline_eval_deriv(gsp->spline_x,t,gsp->acc);
-	double new_dx2 = gsl_spline_eval_deriv2(gsp->spline_x,t,gsp->acc);
-
-	double new_dy = gsl_spline_eval_deriv(gsp->spline_y,t,gsp->acc);
-	double new_dy2 = gsl_spline_eval_deriv2(gsp->spline_y,t,gsp->acc);
-
-	double kappa = (new_dx * new_dy2 - new_dx2 * new_dy)/sqrt(pow(new_dx * new_dx + new_dy * new_dy,3.0));
-
-	return abs(kappa);
-}
-
 // bisection search to find appropriate point
 void bisectionSearch(const gsl_function& gf, double low_length, double length, double start, double end, double* value)
 {
@@ -117,8 +91,6 @@ void computeNewPointsByArcParameters(const gsl_spline_pointer* gsp, int param_nu
 // extract fixed number of feature points from curve
 void extractCurveFeature(double* x, double* y, int point_num, int feature_num, double*& feature)
 {
-	gsl_integration_workspace* w = gsl_integration_workspace_alloc(20);
-
 	/************************************************************************/
 	/* Construct the traditional cubic spline curve                         */
 	/************************************************************************/
@@ -130,15 +102,13 @@ void extractCurveFeature(double* x, double* y, int point_num, int feature_num, d
 	// compute the parameters
 	computeParameters(x,y,gsp->params,param_num);
 	
-	/*
 	printf("original params:\n");
 	for(int i = 0; i < param_num; i++)
 		printf("%g ",gsp->params[i]);
 	printf("\n");
-	//*/
 
 	// construct the traditional spline curve
-	constructBSpline(gsp,x,y,param_num);
+	constructBSpline(gsp,x,y,gsp->param_num);
 
 	/************************************************************************/
 	/* Construct the cubic spline curve based on arc-length parameter       */
@@ -158,8 +128,6 @@ void extractCurveFeature(double* x, double* y, int point_num, int feature_num, d
 		end = gsp->params[i];
 
 		gsl_integration_qng(&gf,start,end,0.1,0.1,&r,&er,&n);
-		
-		//gsl_integration_qag(&gf,start,end,1e-10,1e-10,20,GSL_INTEG_GAUSS41,w,&r,&er);			
 
 		length += r;
 	}
@@ -185,8 +153,6 @@ void extractCurveFeature(double* x, double* y, int point_num, int feature_num, d
 
 			gsl_integration_qng(&gf,start,end,0.1,0.1,&r,&er,&n);
 			
-			//gsl_integration_qag(&gf,start,end,1e-10,1e-10,20,GSL_INTEG_GAUSS41,w,&r,&er);			
-
 			if(find_length - acc_length >= 0.0001 && acc_length + r - find_length > 0.0001)
 			{
 				acc_length += r;
@@ -212,7 +178,6 @@ void extractCurveFeature(double* x, double* y, int point_num, int feature_num, d
 
 	computeNewPointsByArcParameters(gsp,m,new_params,new_data_x,new_data_y);
 
-	/*
 	printf("new data points:\n");
 	ofstream out_x("x.txt");
 	ofstream out_y("y.txt");
@@ -224,18 +189,17 @@ void extractCurveFeature(double* x, double* y, int point_num, int feature_num, d
 		printf("%g %g\n",new_data_x[i],new_data_y[i]);
 	}
 	printf("\n");
-	//*/
 
 	// re-parameterizing the traditional spline by arc-length parameter
 	gsl_spline_pointer* gsp2 = new gsl_spline_pointer();
-	gsp2->param_num = m ;
+	gsp2->param_num = m;
 	gsp2->params = new double[gsp2->param_num];
 
-	for(int i = 0; i < m; i++)
+	for(int i = 0; i < gsp2->param_num; i++)
 		gsp2->params[i] = i * sub_length;
 
 	// spline parameterized by arc-length
-	constructBSpline(gsp2,new_data_x,new_data_y,m);
+	constructBSpline(gsp2,new_data_x,new_data_y,gsp2->param_num);
 		
 	feature = new double[feature_num * 3];
 
@@ -266,8 +230,6 @@ void extractCurveFeature(double* x, double* y, int point_num, int feature_num, d
 	delete gsp;
 	delete gsp2;
 	delete new_params;
-
-	gsl_integration_workspace_free(w);
 }
 
 

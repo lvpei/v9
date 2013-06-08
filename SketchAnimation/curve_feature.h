@@ -64,7 +64,6 @@ void constructBSpline(gsl_spline_pointer* gsp, double* x, double* y, int param_n
 
 // integrate function
 double fx(double t, void* param);
-double fx2(double t, void* param);
 
 // bisection search to find appropriate point
 void bisectionSearch(const gsl_function& gf, double low_length, double length, double start, double end, double* value);
