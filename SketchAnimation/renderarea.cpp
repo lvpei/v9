@@ -339,8 +339,8 @@ void RenderArea::paintEvent(QPaintEvent * /* event */)
 			glLoadIdentity();
 
 			// projection matrix
-			//gluPickMatrix(m_iPickX - m_Translation.x(),viewport[3] - m_iPickY + m_Translation.y(),4,4,viewport);
-			gluPickMatrix(m_iPickX,viewport[3] - m_iPickY,4,4,viewport);
+			gluPickMatrix(m_iPickX - m_Translation.x(),viewport[3] - m_iPickY + m_Translation.y(),4,4,viewport);
+			//gluPickMatrix(m_iPickX,viewport[3] - m_iPickY,4,4,viewport);
 			glMultMatrixd(m_vProjectionMatrix);
 
 			glMatrixMode(GL_MODELVIEW);
@@ -383,8 +383,8 @@ void RenderArea::paintEvent(QPaintEvent * /* event */)
 		{
 			painter.setCompositionMode(QPainter::CompositionMode_SourceOver);	
 			// background
-			//painter.drawImage(m_Translation.x(),m_Translation.y(),threedpose);	// candidate 3D poses
-			painter.drawImage(0,0,threedpose);	// candidate 3D poses
+			painter.drawImage(m_Translation.x(),m_Translation.y(),threedpose);	// candidate 3D poses
+			//painter.drawImage(0,0,threedpose);	// candidate 3D poses
 		}
 
 		if(m_bShowSketch)
@@ -418,10 +418,10 @@ void RenderArea::paintEvent(QPaintEvent * /* event */)
 	
 	if(m_iSketchOrder < MAX_SKETCH_NUM)
 	{
-	QFont serifFont("Times New Roman", 22, QFont::Bold);
-	painter.setFont(serifFont);
-	painter.setPen(QColor(aColor[m_iSketchOrder]));
-	painter.drawText(10,30,hintStr[m_iSketchOrder]);
+		QFont serifFont("Times New Roman", 22, QFont::Bold);
+		painter.setFont(serifFont);
+		painter.setPen(QColor(aColor[m_iSketchOrder]));
+		painter.drawText(10,30,hintStr[m_iSketchOrder]);
 	}
 
 	painter.end();
@@ -965,6 +965,9 @@ void RenderArea::mouseReleaseEvent(QMouseEvent * event)
 					out_x<< m_vPoints[i].x()<<",";
 					out_y<< m_vPoints[i].y()<<",";
 				}
+
+				out_x.close();
+				out_y.close();
 
 				printf("dealing with user's sketching curve\n");
 				
@@ -4329,7 +4332,7 @@ void RenderArea::drawSketchingAnimationInterface()
 	//glTranslatef(-global_pos.x , -global_pos.y ,-global_pos.z );
 
 	// show the joint trajectory
-	for(int clip_idx = 0; clip_idx < /*motion_clip_num*/5; clip_idx++)
+	for(int clip_idx = 0; clip_idx < motion_clip_num; clip_idx++)
 	{
 		int idx = motion_clip_index[clip_idx];
 		vector<Vector3d>& vPos = m_vMotionClip[idx]->m_vJointTrajByPos[m_iShowTrajectoryIndex];
@@ -4405,17 +4408,17 @@ void RenderArea::updateCandidateAnimationSets(const vector<CvPoint2D32f>& sketch
 
 	pt.setPen(QColor(255,0,0));
 
-	ofstream out_x;
-	ofstream out_y;
+	//ofstream out_x;
+	//ofstream out_y;
 
-	char filename_x[50];
-	char filename_y[50];
-	for(int i = 0; i < /*m_vMotionClip.size()*/5; i++)
+	//char filename_x[50];
+	//char filename_y[50];
+	for(int i = 0; i < m_vMotionClip.size(); i++)
 	{
-		sprintf(filename_x,"%d_x.txt",i);
-		sprintf(filename_y,"%d_y.txt",i);
-		out_x.open(filename_x);
-		out_y.open(filename_y);
+		//sprintf(filename_x,"%d_x.txt",i);
+		//sprintf(filename_y,"%d_y.txt",i);
+		//out_x.open(filename_x);
+		//out_y.open(filename_y);
 
 		// store the curve feature of motion from database
 		vector<CvPoint2D32f> db_curve_feature;
@@ -4444,20 +4447,20 @@ void RenderArea::updateCandidateAnimationSets(const vector<CvPoint2D32f>& sketch
 				if(tmp.x() != point2D.x() || tmp.y() != point2D.y())
 				{	
 					prj2DArr.push_back(point2D);
-					out_x<< point2D.x()<<",";
-					out_y<< point2D.y()<<",";
+					//out_x<< point2D.x()<<",";
+					//out_y<< point2D.y()<<",";
 				}
 			}
 			else
 			{
 				prj2DArr.push_back(point2D);
-				out_x<< point2D.x()<<",";
-				out_y<< point2D.y()<<",";
+				//out_x<< point2D.x()<<",";
+				//out_y<< point2D.y()<<",";
 			}
 
 		}
-		out_x<<"\n";
-		out_y<<"\n";
+		//out_x<<"\n";
+		//out_y<<"\n";
 
 		// for test
 		for(int j = 1; j < prj2DArr.size(); j++)
@@ -4589,8 +4592,8 @@ void RenderArea::updateCandidateAnimationSets(const vector<CvPoint2D32f>& sketch
 			motion_clip_index[i] = i;
 		}
 
-		out_x.close();
-		out_y.close();
+		//out_x.close();
+		//out_y.close();
 	}
 
 	pt.end();

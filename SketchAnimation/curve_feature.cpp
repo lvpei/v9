@@ -64,7 +64,7 @@ void bisectionSearch(const gsl_function& gf, double low_length, double length, d
 
 	double mid = (start + end) / 2;
 
-	gsl_integration_qng(&gf,start,mid,1e-10,1e-10,&r,&er,&n);
+	gsl_integration_qng(&gf,start,mid,0.1,0.1,&r,&er,&n);
 
 	if(abs(low_length + r - length) < 0.001)
 		(*value) = mid;
