@@ -76,7 +76,7 @@
       <OutputFile>$(OutDir)\$(ProjectName).exe</OutputFile>
       <AdditionalLibraryDirectories>$(QTDIR)\lib;$(OPENCV_DIR)\lib;.\lib;.\gsl-1.15\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>false</GenerateDebugInformation>
-      <AdditionalDependencies>qtmain.lib;QtCore4.lib;QtGui4.lib;QtOpenGL4.lib;opencv_core231.lib;opencv_highgui231.lib;opencv_imgproc231.lib;opencv_video231.lib;ANN.lib;libgslcblas-0.lib;libgsl-0.lib;MEMathLib.lib;Utils.lib;glew32.lib;QtXml4.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>qtmain.lib;QtCore4.lib;QtGui4.lib;QtOpenGL4.lib;opencv_core231.lib;opencv_highgui231.lib;opencv_imgproc231.lib;opencv_video231.lib;ANN.lib;gsl.lib;cblas.lib;MEMathLib.lib;Utils.lib;glew32.lib;QtXml4.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

@@ -60,6 +60,7 @@ char* motion_clip_filename[] = {
 };
 //*/
 
+/*
 char* motion_clip_filename[] = {
 	"Resources\\walk_from_jianyuan_5_5\\ACTOR2-2.AMC",
 	"Resources\\walk_from_jianyuan_5_5\\Actor2.MickeySneakingWalk001_2.AMC",
@@ -107,6 +108,20 @@ char* motion_clip_filename[] = {
 	"D:\\Siggraph2013\\v9\\sketchAnimation\\Resources\\boxing\\boxing_13_17_Take_005.amc"
 };
 //*/
+
+char* motion_clip_filename[] = {
+	"Resources\\reach\\lvpei.standingstraightforward_a_Take_001_noback.amc",
+	"Resources\\reach\\lvpei.standingstraightforward_a_Take_002_noback.amc",
+	"Resources\\reach\\lvpei.standingstraightforward_a_Take_003_noback.amc",
+	"Resources\\reach\\lvpei.standingstraightforward_a_Take_004_noback.amc",
+	"Resources\\reach\\lvpei.standingstraightforward_a_Take_005_noback.amc",
+	"Resources\\reach\\lvpei.standingstraightforward_a_Take_006_noback.amc",
+	"Resources\\reach\\lvpei.standingstraightforward_a_Take_007_noback.amc",
+	"Resources\\reach\\lvpei.standingstraightforward_a_Take_008_noback.amc",
+	"Resources\\reach\\lvpei.standingstraightforward_a_Take_009_noback.amc",
+	"Resources\\reach\\lvpei.standingstraightforward_a_Take_010_noback.amc",
+	"Resources\\reach\\lvpei.standingstraightforward_a_Take_011_noback.amc"
+};
 
 RenderArea::RenderArea(QWidget *parent)
 	: QGLWidget(QGLFormat(QGL::AlphaChannel|QGL::SampleBuffers), parent)
@@ -993,7 +1008,7 @@ void RenderArea::mouseReleaseEvent(QMouseEvent * event)
 				// update candidate motion clips
 				updateCandidateAnimationSets(m_TrajectoryFeature[m_iShowTrajectoryIndex]);
 
-				m_Translation = computeTranslationBetweenJointAndSketching();
+				//m_Translation = computeTranslationBetweenJointAndSketching();
 
 
 				delete data_x;
@@ -1167,6 +1182,8 @@ void RenderArea::resetContent()
 	vSketchedBones.clear();
 
 	m_bRefined = false;
+
+	m_Translation = QPoint(0,0);
 
 	repaint();
 }
@@ -1368,8 +1385,9 @@ void RenderArea::setDBDir(QString dir)
 void RenderArea::setDBDir(const vector<QString>& baseDir, vector<DatabaseUnit>& databaseHierarchy)
 {
 	// load the trajectory of the joint movement
-	loadMotionClipsFromFile("test_for_jianyuan_walk.xml");
+	//loadMotionClipsFromFile("test_for_jianyuan_walk.xml");
 	//loadMotionClipsFromFile("boxing_13_17_Take_001-005.xml");
+	loadMotionClipsFromFile("test_for_reach.xml");
 
 	for(int i = 0; i < m_vMotionClip.size(); i++)
 		motion_clip_index.push_back(i);
@@ -1639,7 +1657,8 @@ void RenderArea::initializeGL()
 
 	// load the skeleton structure
 	//m_pSkeleton = new Skeleton(".\\Resources\\boxing_13.asf",SKELETON_SCALE);
-	m_pSkeleton = new Skeleton("Resources\\walk_from_jianyuan_5_5\\jianyuan.asf",SKELETON_SCALE);
+	//m_pSkeleton = new Skeleton("Resources\\walk_from_jianyuan_5_5\\jianyuan.asf",SKELETON_SCALE);
+	m_pSkeleton = new Skeleton(".\\Resources\\reaching.asf",SKELETON_SCALE);
 	
 	if(!m_pSkeleton->isLoaded())
 		qDebug()<<"skeleton is not loaded";

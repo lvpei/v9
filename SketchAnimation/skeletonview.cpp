@@ -122,7 +122,8 @@ void SkeletonView::initializeGL() {
 
 	// load the skeleton structure
 	//m_pSkeleton = new Skeleton(".\\Resources\\boxing_13.asf",0.3);
-	m_pSkeleton = new Skeleton("Resources\\walk_from_jianyuan_5_5\\jianyuan.asf",0.3);
+	//m_pSkeleton = new Skeleton("Resources\\walk_from_jianyuan_5_5\\jianyuan.asf",0.3);
+	m_pSkeleton = new Skeleton(".\\Resources\\reaching.asf",0.3);
 
 	if(!m_pSkeleton->isLoaded())
 		qDebug()<<"skeleton is not loaded";
